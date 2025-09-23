@@ -1,4 +1,3 @@
-// Archivo: db.js (versión para PostgreSQL)
 const { Pool } = require('pg');
 
 const pool = new Pool({
@@ -8,7 +7,6 @@ const pool = new Pool({
   }
 });
 
-// Exportamos el pool para poder hacer consultas
 module.exports = {
   query: (text, params) => pool.query(text, params),
 };
