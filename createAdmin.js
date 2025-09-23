@@ -1,5 +1,5 @@
 // Archivo: CreateAdmin.js (Versión Corregida para PostgreSQL)
-
+require('dotenv').config();
 const { Pool } = require('pg');
 const bcrypt = require('bcryptjs');
 
