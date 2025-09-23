@@ -1,0 +1,9 @@
+# Dependencias de Node.js
+node_modules
+
+# Archivos de entorno (contienen secretos y contraseñas)
+.env
+
+# Logs y archivos del sistema operativo
+npm-debug.log*
+.DS_Store
