@@ -9,12 +9,12 @@ const productosRoutes = require('./routes/productos');
 const imagenesRoutes = require('./routes/imagenes');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3000; // Render inyecta automáticamente el puerto
 
 app.use(cors());
 app.use(express.json());
 
-// rutas
+// Rutas
 app.use('/', authRoutes);           // /login
 app.use('/usuarios', usuariosRoutes);
 app.use('/categorias', categoriasRoutes);
@@ -23,6 +23,7 @@ app.use('/imagenes', imagenesRoutes);
 
 app.get('/', (req, res) => res.json({ mensaje: 'API tienda_gamer funcionando' }));
 
+// Arrancar servidor
 app.listen(PORT, () => {
   console.log(`🚀 Servidor corriendo en http://localhost:${PORT}`);
 });

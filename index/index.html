@@ -9,8 +9,7 @@
   <style>
     body { background-color: #f0f2f5; }
     .card img { height: 220px; object-fit: cover; }
-    .admin-panel { display: none; } /* Oculto por defecto */
-    .super-panel { display: none; } /* Oculto por defecto */
+    .admin-panel, .super-panel { display: none; } /* Ocultos por defecto */
     .card-title { font-weight: 600; }
     .card-text { font-size: 0.9rem; }
   </style>
@@ -19,7 +18,7 @@
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
   <div class="container">
-    <a class="navbar-brand fw-bold" href="#"><i class="bi bi-joystick"></i> TIENDAMANIAaaa GAMER</a>
+    <a class="navbar-brand fw-bold" href="#"><i class="bi bi-joystick"></i> TIENDAMANIA GAMER</a>
     <div>
       <button id="btnLogin" class="btn btn-outline-light me-2">Iniciar sesión</button>
       <button id="btnLogout" class="btn btn-light d-none">Cerrar sesión <i class="bi bi-box-arrow-right"></i></button>
@@ -224,7 +223,6 @@ async function apiFetch(path, options = {}) {
 // =================== INICIALIZACIÓN DE LA APP ====================
 // =================================================================
 document.addEventListener("DOMContentLoaded", () => {
-    // Instancias de Modales de Bootstrap
     loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
     productModal = new bootstrap.Modal(document.getElementById('productModal'));
     detalleModal = new bootstrap.Modal(document.getElementById('detalleModal'));
@@ -235,11 +233,9 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function setupEventListeners() {
-    // Botones Login/Logout
     btnLogin.onclick = () => loginModal.show();
     btnLogout.onclick = logout;
 
-    // Formularios
     formLogin.onsubmit = handleLogin;
     formCategoria.onsubmit = handleCreateCategory;
     formProducto.onsubmit = handleCreateOrUpdateProduct;
@@ -264,11 +260,11 @@ async function handleLogin(e) {
             body: JSON.stringify({ username: loginUser.value, password: loginPass.value })
         });
         localStorage.setItem("token", res.token);
-        localStorage.setItem("role", res.role); // <-- ¡CLAVE! Guardar el rol
+        localStorage.setItem("role", res.role);
         loginMsg.textContent = "";
         loginModal.hide();
         checkLoginStatus();
-        loadProducts(); // Recargar productos para mostrar botones de admin
+        loadProducts();
     } catch (err) {
         loginMsg.textContent = "❌ " + (err.error || "Error de conexión");
     }
@@ -276,31 +272,28 @@ async function handleLogin(e) {
 
 function logout() {
     localStorage.removeItem("token");
-    localStorage.removeItem("role"); // <-- ¡CLAVE! Limpiar el rol
+    localStorage.removeItem("role");
     checkLoginStatus();
-    loadProducts(); // Recargar productos para ocultar botones de admin
+    loadProducts();
 }
 
 function checkLoginStatus() {
     const token = localStorage.getItem("token");
     const role = localStorage.getItem("role");
 
-    // Lógica de visibilidad de paneles
     const isAdmin = role === 'admin' || role === 'super';
     const isSuper = role === 'super';
     
     document.querySelectorAll('.admin-panel').forEach(el => el.style.display = isAdmin ? 'block' : 'none');
     document.querySelectorAll('.super-panel').forEach(el => el.style.display = isSuper ? 'block' : 'none');
 
-    // Botones Login/Logout
     btnLogout.classList.toggle("d-none", !token);
     btnLogin.classList.toggle("d-none", !!token);
 
-    // Cargar datos de superusuario si corresponde
     if (isSuper) {
         loadUsers();
     } else {
-        document.getElementById('userList').innerHTML = ''; // Limpiar lista si no es super
+        document.getElementById('userList').innerHTML = '';
     }
 }
 
@@ -321,7 +314,6 @@ function renderCategories(categories) {
     categories.forEach(c => {
         nav.innerHTML += `<a href="#" class="list-group-item list-group-item-action" data-id="${c.id}">${c.nombre}</a>`;
     });
-    // Añadir event listeners a los nuevos links
     nav.querySelectorAll('a').forEach(a => {
         a.onclick = (e) => {
             e.preventDefault();
@@ -347,7 +339,7 @@ async function handleCreateCategory(e) {
             body: JSON.stringify({ nombre })
         });
         catNombre.value = "";
-        loadCategories(); // Recargar
+        loadCategories();
     } catch (err) { alert("Error al crear categoría"); }
 }
 
@@ -357,7 +349,8 @@ async function handleCreateCategory(e) {
 async function loadProducts() {
     try {
         const prods = await apiFetch("/productos");
-        allProducts = prods.map(p => ({ ...p, firstImageUrl: p.firstImageUrl || 'https://via.placeholder.com/300' }));
+        // Ya no se añade el placeholder. Simplemente usamos los datos de la API.
+        allProducts = prods;
         renderProducts(allProducts);
     } catch (err) { /* Manejo de error */ }
 }
@@ -377,10 +370,17 @@ function renderProducts(products) {
             <button class="btn btn-sm btn-outline-secondary me-2" onclick="openEditProductModal(${p.id})"><i class="bi bi-pencil"></i> Editar</button>
             <button class="btn btn-sm btn-outline-danger" onclick="deleteProduct(${p.id})"><i class="bi bi-trash"></i></button>
         ` : '';
+        
+        // Si p.firstimageurl existe, crea la etiqueta <img>.
+        // Si no, crea un recuadro gris con un icono.
+        const imageHtml = p.firstimageurl
+          ? `<img src="${p.firstimageurl}" class="card-img-top">`
+          : `<div class="card-img-top d-flex align-items-center justify-content-center bg-light text-muted" style="height: 220px;"><i class="bi bi-image-alt fs-1"></i></div>`;
+
         grid.innerHTML += `
         <div class="col-md-6 col-lg-4">
           <div class="card h-100 shadow-sm">
-            <img src="${p.firstImageUrl}" class="card-img-top">
+            ${imageHtml}
             <div class="card-body">
               <h5 class="card-title">${p.nombre}</h5>
               <p class="card-text text-muted">${p.categoria || "Sin categoría"}</p>
@@ -450,7 +450,7 @@ async function deleteProduct(id) {
 async function openDetalleModal(id) {
     const p = allProducts.find(x => x.id === id);
     detalleTitle.textContent = p.nombre;
-    imgProductoId.value = id; // Para el form de nueva imagen
+    imgProductoId.value = id;
 
     detalleInfo.innerHTML = `
         <li class="list-group-item"><b>Precio:</b> S/ ${Number(p.precio).toFixed(2)}</li>
@@ -491,8 +491,8 @@ async function handleCreateImage(e) {
             body: JSON.stringify({ url, producto_id })
         });
         imgUrl.value = '';
-        loadProductImages(producto_id); // Recargar imágenes del modal
-        loadProducts(); // Recargar productos para actualizar la imagen principal
+        loadProductImages(producto_id);
+        loadProducts();
     } catch (err) { alert('Error al añadir imagen'); }
 }
 
