@@ -197,7 +197,7 @@
 // =================================================================
 // =================== CONFIGURACIÓN Y HELPERS =====================
 // =================================================================
-const API_BASE = "https://tienda-gamer-api.onrender.com";
+const API_BASE = "/api";
 let allCategories = [];
 let allProducts = [];
 let loginModal, productModal, detalleModal;
@@ -254,21 +254,28 @@ async function loadInitialData() {
 async function handleLogin(e) {
     e.preventDefault();
     try {
+        const payload = {
+            // enviamos ambos nombres por compatibilidad con distintos backends:
+            username: loginUser.value,
+            usuario: loginUser.value,
+            password: loginPass.value
+        };
         const res = await apiFetch("/login", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ username: loginUser.value, password: loginPass.value })
+            body: JSON.stringify(payload)
         });
         localStorage.setItem("token", res.token);
-        localStorage.setItem("role", res.role);
+        localStorage.setItem("role", res.role || res.rol || 'user');
         loginMsg.textContent = "";
         loginModal.hide();
         checkLoginStatus();
         loadProducts();
     } catch (err) {
-        loginMsg.textContent = "❌ " + (err.error || "Error de conexión");
+        loginMsg.textContent = "❌ " + (err.error || err.message || "Error de conexión");
     }
 }
+
 
 function logout() {
     localStorage.removeItem("token");
