@@ -3,12 +3,12 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 
+const swaggerDocs = require('./swagger');
 const authRoutes = require('./routes/auth');
 const usuariosRoutes = require('./routes/usuarios');
 const categoriasRoutes = require('./routes/categorias');
 const productosRoutes = require('./routes/productos');
 const imagenesRoutes = require('./routes/imagenes');
-
 const app = express();
 const PORT = process.env.PORT || 3000; // Render inyecta automáticamente el puerto
 
@@ -30,7 +30,7 @@ app.use('/api/usuarios', usuariosRoutes);
 app.use('/api/categorias', categoriasRoutes);
 app.use('/api/productos', productosRoutes);
 app.use('/api/imagenes', imagenesRoutes);
-
+swaggerDocs(app);
 // ======================================================
 // 3. Ruta raíz -> abrir index.html
 // ======================================================
