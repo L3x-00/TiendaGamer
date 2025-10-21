@@ -1,13 +1,6 @@
-// TiendaGamer/index/js/index.js
-
+// index/js/index.js
 document.addEventListener('DOMContentLoaded', () => {
-
-    // --- CONFIGURACIÓN Y VARIABLES GLOBALES ---
-    // Como el frontend se sirve desde el mismo servidor que la API,
-    // la URL base es simplemente la raíz.
     const API_BASE_URL = ''; 
-
-    // Elementos del DOM que vamos a manipular (usando los ID de TU HTML)
     const productsGrid = document.getElementById('productsGrid');
     const categoriesNav = document.getElementById('categoriesNav');
     const productsTitle = document.getElementById('productsTitle');
@@ -28,9 +21,6 @@ document.addEventListener('DOMContentLoaded', () => {
     let allProducts = [];
     let allCategories = [];
 
-
-    // --- FUNCIONES PARA OBTENER DATOS DE LA API ---
-
     async function apiFetch(endpoint, options = {}) {
         const token = localStorage.getItem("token");
         if (token) {
@@ -46,7 +36,6 @@ document.addEventListener('DOMContentLoaded', () => {
             return await response.json();
         } catch (error) {
             console.error('Error al conectar con la API:', error);
-            // Mostrar un mensaje amigable al usuario en la cuadrícula de productos
             if (productsGrid) {
                 productsGrid.innerHTML = `<div class="col-12"><div class="alert alert-danger">No se pudieron cargar los productos. Revisa la consola para más detalles.</div></div>`;
             }
@@ -54,32 +43,28 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Obtener todos los productos
     async function fetchProductos() {
         allProducts = await apiFetch('productos');
         renderProductos(allProducts);
     }
 
-    // Obtener productos por categoría
-    async function fetchProductosPorCategoria(idCategoria) {
-        const productos = await apiFetch(`productos/categoria/${idCategoria}`);
+    // CAMBIO: Esta función ahora filtra localmente, en lugar de llamar a una API que no existe.
+    function fetchProductosPorCategoria(idCategoria) {
+        const productos = (idCategoria === 'all')
+            ? allProducts
+            : allProducts.filter(p => p.categoria_id == idCategoria);
         renderProductos(productos);
     }
     
-    // Obtener todas las categorías
     async function fetchCategorias() {
         allCategories = await apiFetch('categorias');
         renderMenuCategorias(allCategories);
     }
 
-    // Obtener detalles de un solo producto (incluyendo imágenes)
     async function fetchProductoDetalle(idProducto) {
         const producto = await apiFetch(`productos/${idProducto}`);
         renderProductoDetalle(producto);
     }
-
-
-    // --- FUNCIONES PARA RENDERIZAR HTML EN EL PÁGINA ---
 
     function renderProductos(productos) {
         if (!productos || productos.length === 0) {
@@ -88,8 +73,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         
         productsGrid.innerHTML = productos.map(producto => {
+            // CAMBIO: Ahora busca 'firstimageurl' que coincide con el backend.
             const imagenPrincipal = producto.firstimageurl || 'https://via.placeholder.com/300x200.png?text=Sin+Imagen';
-
             return `
                 <div class="col-md-6 col-lg-4">
                     <div class="card h-100 producto-card" data-id="${producto.id}">
@@ -107,7 +92,6 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
         }).join('');
 
-        // Añadir event listeners a los botones "Ver Detalle"
         document.querySelectorAll('.ver-detalle-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.stopPropagation();
@@ -120,27 +104,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderMenuCategorias(categorias) {
         if (!categorias || categorias.length === 0) return;
-
         categoriesNav.innerHTML = '<a href="#" class="list-group-item list-group-item-action active" data-id="all">Todos</a>';
         categorias.forEach(categoria => {
             categoriesNav.innerHTML += `<a href="#" class="list-group-item list-group-item-action categoria-link" data-id="${categoria.id}">${categoria.nombre}</a>`;
         });
-
-        // Añadir event listeners a los enlaces de categorías
         document.querySelectorAll('.categoria-link').forEach(link => {
             link.addEventListener('click', (e) => {
                 e.preventDefault();
                 const categoriaId = e.target.dataset.id;
-                
-                // Actualizar título
                 const categoriaNombre = e.target.textContent;
                 productsTitle.textContent = `Productos de: ${categoriaNombre}`;
-
+                // CAMBIO: Llama a la función local de filtrado.
                 fetchProductosPorCategoria(categoriaId);
             });
         });
-
-        // Listener para "Todos"
         categoriesNav.querySelector('a[data-id="all"]').addEventListener('click', (e) => {
             e.preventDefault();
             categoriesNav.querySelector('.active').classList.remove('active');
@@ -152,82 +129,49 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderProductoDetalle(producto) {
         if (!producto) return;
-
         detalleTitle.textContent = producto.nombre;
-        
         let imagenesHtml = '<p>Cargando imágenes...</p>';
         detalleImagenes.innerHTML = imagenesHtml;
-        
-        // Cargar imágenes del producto
         apiFetch(`/imagenes/${producto.id}`).then(imagenes => {
             if (imagenes.length === 0) {
                 imagenesHtml = '<p>Este producto no tiene imágenes.</p>';
             } else {
-                imagenesHtml = imagenes.map(img => `
-                    <div class="col-6 mb-2">
-                      <img src="${img.url}" class="img-fluid rounded">
-                    </div>`).join('');
+                imagenesHtml = imagenes.map(img => `<div class="col-6 mb-2"><img src="${img.url}" class="img-fluid rounded"></div>`).join('');
             }
             detalleImagenes.innerHTML = imagenesHtml;
         });
-
         detalleInfo.innerHTML = `
             <li class="list-group-item"><b>Precio:</b> S/ ${Number(producto.precio).toFixed(2)}</li>
             <li class="list-group-item"><b>Stock:</b> ${producto.stock} unidades</li>
             <li class="list-group-item"><b>Categoría:</b> ${producto.categoria || "N/A"}</li>
             <li class="list-group-item"><b>Descripción:</b> ${producto.descripcion || "No disponible"}</li>
         `;
-        
         detalleModal.show();
     }
 
-
-    // --- MANEJO DE FORMULARIOS Y AUTENTICACIÓN ---
-    
-    // Login
     if (formLogin) {
         formLogin.addEventListener('submit', async (e) => {
             e.preventDefault();
             loginMsg.textContent = '';
             try {
                 const payload = { username: loginUser.value, password: loginPass.value };
-                const data = await apiFetch('login', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-                
+                const data = await apiFetch('login', { method: "POST", headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
                 localStorage.setItem('token', data.token);
                 localStorage.setItem('role', data.role || 'user');
-                
                 loginMsg.textContent = '¡Login exitoso!';
                 loginMsg.className = 'text-success mt-2 text-center';
-                
-                setTimeout(() => {
-                    bootstrap.Modal.getInstance(document.getElementById('loginModal')).hide();
-                    checkLoginStatus();
-                    fetchProductos(); // Recargar para mostrar botones de admin si es necesario
-                }, 1000);
-
-            } catch (error) {
-                loginMsg.textContent = `❌ ${error.message}`;
-                loginMsg.className = 'text-danger mt-2 text-center';
-            }
+                setTimeout(() => { bootstrap.Modal.getInstance(document.getElementById('loginModal')).hide(); checkLoginStatus(); fetchProductos(); }, 1000);
+            } catch (error) { loginMsg.textContent = `❌ ${error.message}`; loginMsg.className = 'text-danger mt-2 text-center'; }
         });
     }
 
-    // Crear Categoría
     if (formCategoria) {
         formCategoria.addEventListener('submit', async (e) => {
             e.preventDefault();
             const nombre = catNombre.value;
             if (!nombre) return;
             try {
-                await apiFetch('categorias', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ nombre })
-                });
+                await apiFetch('categorias', { method: "POST", headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ nombre }) });
                 catNombre.value = '';
                 fetchCategorias();
             } catch (err) { alert('Error al crear categoría'); }
@@ -238,7 +182,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const token = localStorage.getItem('token');
         const role = localStorage.getItem('role');
         const isAdmin = role === 'admin' || role === 'super';
-
         document.querySelectorAll('.admin-panel').forEach(el => el.style.display = isAdmin ? 'block' : 'none');
         btnLogout.classList.toggle('d-none', !token);
         btnLogin.classList.toggle('d-none', !!token);
@@ -253,11 +196,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-
-    // --- INICIALIZACIÓN ---
-    // Cargar los datos iniciales cuando la página esté lista
     fetchProductos();
     fetchCategorias();
     checkLoginStatus();
-
 });
