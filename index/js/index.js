@@ -1,5 +1,7 @@
-// index/js/index.js
+// TiendaGamer/index/js/index.js
+
 document.addEventListener('DOMContentLoaded', () => {
+    // --- VARIABLES GLOBALES ---
     const API_BASE_URL = ''; 
     const productsGrid = document.getElementById('productsGrid');
     const categoriesNav = document.getElementById('categoriesNav');
@@ -21,6 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let allProducts = [];
     let allCategories = [];
 
+    // --- FUNCIONES DE LA API ---
     async function apiFetch(endpoint, options = {}) {
         const token = localStorage.getItem("token");
         if (token) {
@@ -36,13 +39,14 @@ document.addEventListener('DOMContentLoaded', () => {
             return await response.json();
         } catch (error) {
             console.error('Error al conectar con la API:', error);
-            if (productsGrid) {
+            if (endpoint === 'productos' || endpoint === 'categorias') {
                 productsGrid.innerHTML = `<div class="col-12"><div class="alert alert-danger">No se pudieron cargar los productos. Revisa la consola para más detalles.</div></div>`;
             }
             throw error;
         }
     }
 
+    // --- FUNCIONES PARA OBTENER DATOS ---
     async function fetchProductos() {
         allProducts = await apiFetch('productos');
         renderProductos(allProducts);
@@ -65,14 +69,22 @@ document.addEventListener('DOMContentLoaded', () => {
         renderProductoDetalle(producto);
     }
 
+    // --- FUNCIONES PARA RENDERIZAR HTML ---
     function renderProductos(productos) {
         if (!productos || productos.length === 0) {
             productsGrid.innerHTML = '<p class="text-muted col-12">No hay productos para mostrar.</p>';
             return;
         }
         
+        const role = localStorage.getItem('role');
+        const isAdmin = role === 'admin' || role === 'super';
+
         productsGrid.innerHTML = productos.map(producto => {
             const imagenPrincipal = producto.firstimageurl || 'https://via.placeholder.com/300x200.png?text=Sin+Imagen';
+            const adminButtons = isAdmin ? `
+                <button class="btn btn-sm btn-outline-secondary me-2" onclick="openEditProductModal(${producto.id})"><i class="bi bi-pencil"></i> Editar</button>
+                <button class="btn btn-sm btn-outline-danger" onclick="deleteProduct(${producto.id})"><i class="bi bi-trash"></i></button>
+            ` : '';
             return `
                 <div class="col-md-6 col-lg-4">
                     <div class="card h-100 producto-card" data-id="${producto.id}">
@@ -84,6 +96,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         </div>
                         <div class="card-footer bg-white border-top-0 pb-3">
                             <button class="btn btn-primary ver-detalle-btn">Ver detalle</button>
+                            <div class="float-end">${adminButtons}</div>
                         </div>
                     </div>
                 </div>
@@ -129,6 +142,7 @@ document.addEventListener('DOMContentLoaded', () => {
         detalleTitle.textContent = producto.nombre;
         let imagenesHtml = '<p>Cargando imágenes...</p>';
         detalleImagenes.innerHTML = imagenesHtml;
+        
         apiFetch(`/imagenes/${producto.id}`).then(imagenes => {
             if (imagenes.length === 0) {
                 imagenesHtml = '<p>Este producto no tiene imágenes.</p>';
@@ -136,7 +150,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 imagenesHtml = imagenes.map(img => `<div class="col-6 mb-2"><img src="${img.url}" class="img-fluid rounded"></div>`).join('');
             }
             detalleImagenes.innerHTML = imagenesHtml;
+        }).catch(err => {
+            console.error('Error cargando imágenes:', err);
+            detalleImagenes.innerHTML = '<p class="text-danger">No se pudieron cargar las imágenes.</p>';
         });
+
         detalleInfo.innerHTML = `
             <li class="list-group-item"><b>Precio:</b> S/ ${Number(producto.precio).toFixed(2)}</li>
             <li class="list-group-item"><b>Stock:</b> ${producto.stock} unidades</li>
@@ -146,33 +164,72 @@ document.addEventListener('DOMContentLoaded', () => {
         detalleModal.show();
     }
 
-    if (formLogin) {
-        formLogin.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            loginMsg.textContent = '';
-            try {
-                const payload = { username: loginUser.value, password: loginPass.value };
-                const data = await apiFetch('login', { method: "POST", headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-                localStorage.setItem('token', data.token);
-                localStorage.setItem('role', data.role || 'user');
-                loginMsg.textContent = '¡Login exitoso!';
-                loginMsg.className = 'text-success mt-2 text-center';
-                setTimeout(() => { bootstrap.Modal.getInstance(document.getElementById('loginModal')).hide(); checkLoginStatus(); fetchProductos(); }, 1000);
-            } catch (error) { loginMsg.textContent = `❌ ${error.message}`; loginMsg.className = 'text-danger mt-2 text-center'; }
-        });
+    // --- FUNCIONES DE FORMULARIOS Y AUTENTICACIÓN ---
+    function handleLogin(e) {
+        e.preventDefault();
+        loginMsg.textContent = '';
+        try {
+            const payload = { username: loginUser.value, password: loginPass.value };
+            const data = await apiFetch('login', { method: "POST", headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+            localStorage.setItem('token', data.token);
+            localStorage.setItem('role', data.role || 'user');
+            loginMsg.textContent = '¡Login exitoso!';
+            loginMsg.className = 'text-success mt-2 text-center';
+            setTimeout(() => { bootstrap.Modal.getInstance(document.getElementById('loginModal')).hide(); checkLoginStatus(); fetchProductos(); }, 1000);
+        } catch (error) { 
+            loginMsg.textContent = `❌ ${error.message}`; 
+            loginMsg.className = 'text-danger mt-2 text-center'; 
+        }
     }
 
-    if (formCategoria) {
-        formCategoria.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const nombre = catNombre.value;
-            if (!nombre) return;
-            try {
-                await apiFetch('categorias', { method: "POST", headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ nombre }) });
-                catNombre.value = '';
-                fetchCategorias();
-            } catch (err) { alert('Error al crear categoría'); }
-        });
+    function handleCreateCategory(e) {
+        e.preventDefault();
+        const nombre = catNombre.value;
+        if (!nombre) return;
+        apiFetch('categorias', { method: "POST", headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ nombre }) }).then(() => {
+            catNombre.value = '';
+            fetchCategorias();
+        }).catch(err => { alert('Error al crear categoría'); });
+    }
+
+    function handleCreateOrUpdateProduct(e) {
+        e.preventDefault();
+        const productId = document.getElementById('prodId').value;
+        const isEditing = !!productId;
+        const productData = { 
+            nombre: document.getElementById('prodNombre').value, 
+            precio: document.getElementById('prodPrecio').value, 
+            stock: document.getElementById('prodStock').value, 
+            categoria_id: document.getElementById('prodCategoria').value, 
+            descripcion: document.getElementById('prodDescripcion').value 
+        };
+        apiFetch(isEditing ? `productos/${productId}` : 'productos', { method: isEditing ? 'PUT' : 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(productData) }).then(() => {
+            bootstrap.Modal.getInstance(document.getElementById('productModal')).hide();
+            document.getElementById('formProducto').reset();
+            fetchProductos();
+        }).catch(err => { alert('Error al guardar el producto'); });
+    }
+
+    function openEditProductModal(id) {
+        const product = allProducts.find(p => p.id === id);
+        if (!product) return;
+        document.getElementById('productModalTitle').textContent = 'Editar Producto';
+        document.getElementById('prodId').value = product.id;
+        document.getElementById('prodNombre').value = product.nombre;
+        document.getElementById('prodPrecio').value = product.precio;
+        document.getElementById('prodStock').value = product.stock;
+        document.getElementById('prodCategoria').value = product.categoria_id;
+        document.getElementById('prodDescripcion').value = product.descripcion;
+        const productModal = new bootstrap.Modal(document.getElementById('productModal'));
+        productModal.show();
+    }
+
+    async function deleteProduct(id) {
+        if (!confirm("¿Estás seguro de que quieres eliminar este producto?")) return;
+        try {
+            await apiFetch(`productos/${id}`, { method: 'DELETE' });
+            fetchProductos();
+        } catch (err) { alert("Error al eliminar el producto"); }
     }
 
     function checkLoginStatus() {
@@ -184,26 +241,25 @@ document.addEventListener('DOMContentLoaded', () => {
         btnLogin.classList.toggle('d-none', !!token);
     }
     
-    if(btnLogout) {
-        btnLogout.addEventListener('click', () => {
-            localStorage.removeItem('token');
-            localStorage.removeItem('role');
-            checkLoginStatus();
-            fetchProductos();
-        });
+    function logout() {
+        localStorage.removeItem('token');
+        localStorage.removeItem('role');
+        checkLoginStatus();
+        fetchProductos();
+    }
+
+    // --- CONFIGURACIÓN DE LISTENERS ---
+    function setupEventListeners() {
+        if (btnLogin) btnLogin.addEventListener('click', () => loginModal.show());
+        if (btnLogout) btnLogout.addEventListener('click', logout);
+        if (formLogin) formLogin.addEventListener('submit', handleLogin);
+        if (formCategoria) formCategoria.addEventListener('submit', handleCreateCategory);
+        if (formProducto) formProducto.addEventListener('submit', handleCreateOrUpdateProduct);
     }
 
     // --- INICIALIZACIÓN ---
     fetchProductos();
     fetchCategorias();
     checkLoginStatus();
-
-    // --- CONFIGURACIÓN DE LISTENERS ---
-    // He movido la configuración de los listeners al final para asegurar que todos los elementos del DOM estén listos.
-    // El listener del botón de login ahora usa addEventListener para mayor robustez.
-    if (btnLogin) {
-        btnLogin.addEventListener('click', () => {
-            loginModal.show();
-        });
-    }
+    setupEventListeners();
 });
