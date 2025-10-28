@@ -22,7 +22,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let allProducts = [];
     let allCategories = [];
-    // La variable loginModal ya no se necesita aquí, la manejaremos bajo demanda.
 
     // --- FUNCIONES DE LA API ---
     async function apiFetch(endpoint, options = {}) {
@@ -63,11 +62,32 @@ document.addEventListener('DOMContentLoaded', () => {
     async function fetchCategorias() {
         allCategories = await apiFetch('categorias');
         renderMenuCategorias(allCategories);
+        updateCategorySelect(); // <-- NUEVO: Llama a la función para poblar el select
     }
 
     async function fetchProductoDetalle(idProducto) {
-        const producto = await apiFetch(`productos/${idProducto}`);
+        console.log("fetchProductoDetalle llamado con ID:", idProducto);
+        const producto = allProducts.find(p => p.id == idProducto);
+        console.log("Producto encontrado:", producto);
+        if (!producto) return;
         renderProductoDetalle(producto);
+    }
+
+    // --- FUNCIONES AUXILIARES ---
+    function updateCategorySelect() {
+        const prodCategoriaSelect = document.getElementById('prodCategoria');
+        if (!prodCategoriaSelect) return;
+
+        // Limpia las opciones existentes
+        prodCategoriaSelect.innerHTML = '<option value="">Selecciona una categoría</option>';
+
+        // Añade las categorías como opciones
+        allCategories.forEach(cat => {
+            const option = document.createElement('option');
+            option.value = cat.id;
+            option.textContent = cat.nombre;
+            prodCategoriaSelect.appendChild(option);
+        });
     }
 
     // --- FUNCIONES PARA RENDERIZAR HTML ---
@@ -83,8 +103,8 @@ document.addEventListener('DOMContentLoaded', () => {
         productsGrid.innerHTML = productos.map(producto => {
             const imagenPrincipal = producto.firstimageurl || 'https://via.placeholder.com/300x200.png?text=Sin+Imagen';
             const adminButtons = isAdmin ? `
-                <button class="btn btn-sm btn-outline-secondary me-2" onclick="openEditProductModal(${producto.id})"><i class="bi bi-pencil"></i> Editar</button>
-                <button class="btn btn-sm btn-outline-danger" onclick="deleteProduct(${producto.id})"><i class="bi bi-trash"></i></button>
+                <button class="btn btn-sm btn-outline-secondary me-2 edit-btn" data-id="${producto.id}"><i class="bi bi-pencil"></i> Editar</button>
+                <button class="btn btn-sm btn-outline-danger delete-btn" data-id="${producto.id}"><i class="bi bi-trash"></i></button>
             ` : '';
             return `
                 <div class="col-md-6 col-lg-4">
@@ -104,12 +124,28 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
         }).join('');
 
+        // Listener para "Ver detalle"
         document.querySelectorAll('.ver-detalle-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.stopPropagation();
                 const card = e.target.closest('.producto-card');
                 const productoId = card.dataset.id;
                 fetchProductoDetalle(productoId);
+            });
+        });
+
+        // NUEVO: Listeners para "Editar" y "Eliminar"
+        document.querySelectorAll('.edit-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const productoId = e.target.dataset.id;
+                openEditProductModal(productoId);
+            });
+        });
+
+        document.querySelectorAll('.delete-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const productoId = e.target.dataset.id;
+                deleteProduct(productoId);
             });
         });
     }
@@ -199,9 +235,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const isEditing = !!productId;
         const productData = { 
             nombre: document.getElementById('prodNombre').value, 
-            precio: document.getElementById('prodPrecio').value, 
-            stock: document.getElementById('prodStock').value, 
-            categoria_id: document.getElementById('prodCategoria').value, 
+            precio: parseFloat(document.getElementById('prodPrecio').value), // <-- NUEVO: Asegura que sea número
+            stock: parseInt(document.getElementById('prodStock').value), // <-- NUEVO: Asegura que sea número
+            categoria_id: document.getElementById('prodCategoria').value ? parseInt(document.getElementById('prodCategoria').value) : null, // <-- NUEVO: Asegura que sea número o nulo
             descripcion: document.getElementById('prodDescripcion').value 
         };
         apiFetch(isEditing ? `productos/${productId}` : 'productos', { method: isEditing ? 'PUT' : 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(productData) }).then(() => {
@@ -253,13 +289,11 @@ document.addEventListener('DOMContentLoaded', () => {
     function setupEventListeners() {
         if (btnLogin) {
             btnLogin.addEventListener('click', () => {
-                // Comprobación de seguridad para asegurar que Bootstrap está cargado
                 if (typeof bootstrap === 'undefined' || typeof bootstrap.Modal === 'undefined') {
                     console.error("Error: Bootstrap o su componente Modal no está cargado.");
                     alert("Error: La interfaz no se ha cargado correctamente. Por favor, recarga la página.");
                     return;
                 }
-                
                 const modalElement = document.getElementById('loginModal');
                 const modal = bootstrap.Modal.getOrCreateInstance(modalElement);
                 modal.show();
