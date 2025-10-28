@@ -2,8 +2,24 @@
 const express = require('express');
 const db = require('../db');
 const { requireRole } = require('../middleware/auth');
+// CAMBIO 1: Importar multer y path
+const multer = require('multer');
+const path = require('path');
 
 const router = express.Router();
+
+// CAMBIO 2: Configuración de Multer para guardar imágenes
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, 'uploads/'); // Asegúrate de que la carpeta 'uploads' exista en tu proyecto
+    },
+    filename: function (req, file, cb) {
+        // Crear un nombre de archivo único para evitar sobreescrituras
+        cb(null, Date.now() + '-' + Math.round(Math.random() * 1E9) + path.extname(file.originalname));
+    }
+});
+
+const upload = multer({ storage: storage });
 
 // GET /productos (público)
 router.get('/', async (req, res) => {
@@ -39,23 +55,34 @@ router.get('/:id', async (req, res) => {
   }
 });
 
+// CAMBIO 3: Modificar POST para usar multer y guardar la imagen
 // POST /productos (admin|super) - Crea un nuevo producto
-router.post('/', requireRole('admin','super'), async (req, res) => {
+router.post('/', requireRole('admin','super'), upload.single('imagen'), async (req, res) => {
   const { nombre, descripcion, precio, stock, categoria_id } = req.body;
   try {
-    // CORRECCIÓN: No se inserta el 'id'. La base de datos lo genera automáticamente.
     const result = await db.query(
       'INSERT INTO productos (nombre, descripcion, precio, stock, categoria_id) VALUES ($1, $2, $3, $4, $5) RETURNING *', 
       [nombre, descripcion, precio, stock, categoria_id]
     );
-    res.status(201).json(result.rows[0]);
+    const newProduct = result.rows[0];
+
+    // Si se subió una imagen, la guardamos en la tabla imagenes_productos
+    if (req.file) {
+      await db.query(
+        'INSERT INTO imagenes_productos (producto_id, url) VALUES ($1, $2)',
+        [newProduct.id, req.file.filename] // req.file.filename contiene el nombre del archivo guardado
+      );
+    }
+
+    res.status(201).json(newProduct);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
+// CAMBIO 4: Modificar PUT para usar multer y guardar la nueva imagen
 // PUT /productos/:id (admin|super) - Actualiza un producto existente
-router.put('/:id', requireRole('admin','super'), async (req, res) => {
+router.put('/:id', requireRole('admin','super'), upload.single('imagen'), async (req, res) => {
   const { id } = req.params;
   const { nombre, descripcion, precio, stock, categoria_id } = req.body;
   try {
@@ -63,6 +90,15 @@ router.put('/:id', requireRole('admin','super'), async (req, res) => {
       'UPDATE productos SET nombre=$1, descripcion=$2, precio=$3, stock=$4, categoria_id=$5 WHERE id=$6', 
       [nombre, descripcion, precio, stock, categoria_id, id]
     );
+
+    // Si se subió una imagen nueva, la guardamos
+    if (req.file) {
+      await db.query(
+        'INSERT INTO imagenes_productos (producto_id, url) VALUES ($1, $2)',
+        [id, req.file.filename]
+      );
+    }
+
     res.json({ id, nombre, descripcion, precio, stock, categoria_id });
   } catch (err) {
     res.status(500).json({ error: err.message });

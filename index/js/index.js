@@ -2,8 +2,8 @@
 
 document.addEventListener('DOMContentLoaded', () => {
     // --- VARIABLES GLOBALES ---
-    // <-- CAMBIO 1: Define la URL base de tu API en Render
-    const API_BASE_URL = 'https://tiendagamer-api.onrender.com'; 
+    // CAMBIO 1: Define la URL base de tu API en Render
+    const API_BASE_URL = 'https://tiendagamer-api.onrender.com';
     const productsGrid = document.getElementById('productsGrid');
     const categoriesNav = document.getElementById('categoriesNav');
     const productsTitle = document.getElementById('productsTitle');
@@ -34,14 +34,8 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const response = await fetch(url, options);
             if (!response.ok) {
-                // Si la respuesta no es JSON (ej. una página de error HTML), manejarlo mejor
-                const contentType = response.headers.get("content-type");
-                if (contentType && contentType.indexOf("application/json") !== -1) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.error || `Error en la API: ${response.statusText}`);
-                } else {
-                    throw new Error(`Error en la API: ${response.statusText} (${response.status})`);
-                }
+                const errorData = await response.json();
+                throw new Error(errorData.error || `Error en la API: ${response.statusText}`);
             }
             return await response.json();
         } catch (error) {
@@ -135,14 +129,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
         document.querySelectorAll('.edit-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
-                const productoId = e.target.dataset.id;
+                const productoId = e.target.closest('.edit-btn').dataset.id;
                 openEditProductModal(productoId);
             });
         });
 
         document.querySelectorAll('.delete-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
-                const productoId = e.target.dataset.id;
+                const productoId = e.target.closest('.delete-btn').dataset.id;
                 deleteProduct(productoId);
             });
         });
@@ -178,14 +172,12 @@ document.addEventListener('DOMContentLoaded', () => {
         let imagenesHtml = '<p>Cargando imágenes...</p>';
         detalleImagenes.innerHTML = imagenesHtml;
         
-        // <-- CAMBIO 2: Quitamos la barra inicial del endpoint
         apiFetch(`imagenes/${producto.id}`).then(imagenes => {
             if (imagenes.length === 0) {
                 imagenesHtml = '<p>Este producto no tiene imágenes.</p>';
             } else {
-                // <-- CAMBIO 3: Construimos la URL completa de la imagen estática
+                // CAMBIO 2: Construimos la URL completa de la imagen estática usando la propiedad 'url'
                 imagenesHtml = imagenes.map(img => {
-                     // Construimos la URL completa a la imagen estática usando la propiedad 'url'
                     const imageUrl = `${API_BASE_URL}/uploads/${img.url}`;
                     return `<div class="col-6 mb-2"><img src="${imageUrl}" class="img-fluid rounded"></div>`;
                 }).join('');
@@ -233,27 +225,58 @@ document.addEventListener('DOMContentLoaded', () => {
         }).catch(err => { alert('Error al crear categoría'); });
     }
 
+    // CAMBIO 3: Función modificada para usar FormData y manejar la subida de archivos
     async function handleCreateOrUpdateProduct(e) {
         e.preventDefault();
         const productId = document.getElementById('prodId').value;
         const isEditing = !!productId;
-        const productData = { 
-            nombre: document.getElementById('prodNombre').value, 
-            precio: parseFloat(document.getElementById('prodPrecio').value), 
-            stock: parseInt(document.getElementById('prodStock').value), 
-            categoria_id: document.getElementById('prodCategoria').value ? parseInt(document.getElementById('prodCategoria').value) : null, 
-            descripcion: document.getElementById('prodDescripcion').value 
+
+        const formData = new FormData();
+        formData.append('nombre', document.getElementById('prodNombre').value);
+        formData.append('precio', document.getElementById('prodPrecio').value);
+        formData.append('stock', document.getElementById('prodStock').value);
+        formData.append('categoria_id', document.getElementById('prodCategoria').value);
+        formData.append('descripcion', document.getElementById('prodDescripcion').value);
+
+        const imagenInput = document.getElementById('prodImagen');
+        if (imagenInput.files.length > 0) {
+            formData.append('imagen', imagenInput.files[0]);
+        }
+
+        const options = {
+            method: isEditing ? 'PUT' : 'POST',
+            body: formData
         };
-        apiFetch(isEditing ? `productos/${productId}` : 'productos', { method: isEditing ? 'PUT' : 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(productData) }).then(() => {
-            bootstrap.Modal.getInstance(document.getElementById('productModal')).hide();
+
+        try {
+            await apiFetch(isEditing ? `productos/${productId}` : 'productos', options);
+            const productModalElement = document.getElementById('productModal');
+            const productModalInstance = bootstrap.Modal.getInstance(productModalElement);
+            productModalInstance.hide();
+            
+            productModalElement.addEventListener('hidden.bs.modal', function () {
+                productModalInstance.dispose();
+            }, { once: true });
+
             document.getElementById('formProducto').reset();
             fetchProductos();
-        }).catch(err => { alert('Error al guardar el producto'); });
+        } catch (err) {
+            console.error('Error al guardar el producto:', err);
+            alert('Error al guardar el producto. Revisa la consola para más detalles.');
+        }
     }
 
+    // CAMBIO 4: Función mejorada para depurar y asegurar que encuentra el producto
     function openEditProductModal(id) {
-        const product = allProducts.find(p => p.id === id);
-        if (!product) return;
+        console.log('Intentando abrir el modal para el producto ID:', id);
+        const product = allProducts.find(p => p.id == id);
+        if (!product) {
+            console.error('Producto no encontrado en allProducts para el ID:', id);
+            alert('Error: No se encontraron los datos del producto para editar.');
+            return;
+        }
+        console.log('Producto encontrado:', product);
+
         document.getElementById('productModalTitle').textContent = 'Editar Producto';
         document.getElementById('prodId').value = product.id;
         document.getElementById('prodNombre').value = product.nombre;

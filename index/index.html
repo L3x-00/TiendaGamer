@@ -1,383 +1,195 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="utf-8">
-  <title>TiendaManía Gamer</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
-  <script src="js/index.js" defer></script>
-  <style>
-    /* ====== Estilo general pastel ====== */
-    body {
-      background: #f8f9fb;
-      font-family: 'Poppins', sans-serif;
-      color: #333;
-    }
-
-    nav.navbar {
-      background: linear-gradient(90deg, #9c88ff, #a29bfe);
-      border-bottom: 3px solid #b2a7ff;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
-
-    .navbar-brand {
-      font-weight: 700;
-      font-size: 1.4rem;
-      color: #fff !important;
-    }
-
-    .navbar .btn {
-      border-radius: 20px;
-      font-weight: 500;
-      transition: all 0.3s ease;
-    }
-
-    .btn-outline-light:hover {
-      background-color: #fff;
-      color: #9c88ff;
-    }
-
-    .container {
-      max-width: 1100px;
-    }
-
-    /* ====== Tarjetas ====== */
-    .card {
-      border: none;
-      border-radius: 18px;
-      box-shadow: 0 3px 10px rgba(0,0,0,0.05);
-      transition: transform 0.2s ease;
-    }
-
-    .card:hover {
-      transform: translateY(-5px);
-    }
-
-    .card-header {
-      background: #f0edff;
-      border-bottom: none;
-      font-weight: 600;
-      color: #5e4bff;
-    }
-
-    .card img {
-      border-radius: 18px 18px 0 0;
-      height: 220px;
-      object-fit: cover;
-    }
-
-    .card-title {
-      font-weight: 600;
-      color: #444;
-    }
-
-    .card-text {
-      font-size: 0.9rem;
-      color: #666;
-    }
-
-    /* ====== Botones suaves ====== */
-    .btn {
-      border-radius: 12px;
-      font-weight: 500;
-      transition: all 0.3s ease;
-    }
-
-    .btn-primary {
-      background-color: #a29bfe;
-      border: none;
-    }
-    .btn-primary:hover {
-      background-color: #9b94ff;
-    }
-
-    .btn-success {
-      background-color: #81ecec;
-      border: none;
-      color: #2d3436;
-    }
-    .btn-success:hover {
-      background-color: #74dcdc;
-    }
-
-    .btn-info {
-      background-color: #74b9ff;
-      border: none;
-      color: white;
-    }
-    .btn-info:hover {
-      background-color: #6ab0f8;
-    }
-
-    .btn-secondary {
-      background-color: #dfe6e9;
-      border: none;
-      color: #2d3436;
-    }
-    .btn-secondary:hover {
-      background-color: #b2bec3;
-    }
-
-    /* ====== Encabezados ====== */
-    h2, h4, h5 {
-      color: #5e4bff;
-      font-weight: 600;
-    }
-
-    /* ====== Formularios ====== */
-    input, select, textarea {
-      border-radius: 10px !important;
-      border: 1px solid #dcdde1 !important;
-      transition: border 0.2s ease;
-    }
-
-    input:focus, select:focus, textarea:focus {
-      border-color: #a29bfe !important;
-      box-shadow: 0 0 0 0.2rem rgba(162,155,254,0.25);
-    }
-
-    /* ====== Modales ====== */
-    .modal-content {
-      border-radius: 15px;
-      border: none;
-      box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-    }
-
-    .modal-header {
-      background-color: #f0edff;
-      color: #5e4bff;
-      border-bottom: none;
-      font-weight: 600;
-    }
-
-    .modal-footer {
-      border-top: none;
-    }
-
-    /* ====== Paneles ====== */
-    .admin-panel, .super-panel {
-      display: none;
-      background-color: #ffffff;
-      border-radius: 18px;
-      padding: 25px;
-      box-shadow: 0 3px 10px rgba(0,0,0,0.05);
-    }
-
-    /* ====== Listas ====== */
-    .list-group-item {
-      border: none;
-      background: #f9f9ff;
-      margin-bottom: 4px;
-      border-radius: 10px;
-    }
-
-    /* ====== Pequeños detalles ====== */
-    hr {
-      border-top: 2px solid #e5e5ff;
-    }
-
-    #productsTitle {
-      color: #4834d4;
-      font-weight: 600;
-      margin-bottom: 1rem;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OfrendaManía Gamer</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="css/style.css"> <!-- Tu CSS personalizado si lo tienes -->
 </head>
-
 <body>
-  <!-- NAVBAR -->
-  <nav class="navbar navbar-expand-lg navbar-dark shadow-sm">
-    <div class="container">
-      <a class="navbar-brand" href="#"><i class="bi bi-controller"></i> TiendaManía Gamer</a>
-      <div>
-        <button id="btnLogin" class="btn btn-outline-light me-2">Iniciar sesión</button>
-        <button id="btnLogout" class="btn btn-light d-none">Cerrar sesión <i class="bi bi-box-arrow-right"></i></button>
-      </div>
-    </div>
-  </nav>
 
-  <!-- CONTENIDO -->
-  <div class="container my-4">
-    <div class="row">
-      <!-- SIDEBAR -->
-      <aside class="col-12 col-md-3 mb-3">
-        <div class="card">
-          <div class="card-header">Categorías</div>
-          <div id="categoriesNav" class="list-group list-group-flush"></div>
-        </div>
-      </aside>
-
-      <!-- PRODUCTOS -->
-      <main class="col-12 col-md-9">
-        <h4 id="productsTitle">Todos los productos</h4>
-        <div class="row g-4" id="productsGrid"></div>
-      </main>
-    </div>
-
-    <!-- PANEL ADMIN -->
-    <div class="admin-panel my-5">
-      <hr>
-      <h2 class="text-center mb-4">Panel de Administración</h2>
-      <div class="row g-4">
-        <div class="col-md-8">
-          <div class="card">
-            <div class="card-header"><i class="bi bi-box-seam"></i> Gestión de Productos</div>
-            <div class="card-body">
-              <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#productModal">
-                <i class="bi bi-plus-circle"></i> Nuevo Producto
-              </button>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="card">
-            <div class="card-header"><i class="bi bi-tags"></i> Gestión de Categorías</div>
-            <div class="card-body">
-              <form id="formCategoria">
-                <div class="input-group">
-                  <input id="catNombre" class="form-control" placeholder="Nueva categoría" required>
-                  <button class="btn btn-success" type="submit">Guardar</button>
+    <header class="bg-dark text-white p-3">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center">
+                <h1 class="h3 mb-0">OfrendaManía Gamer</h1>
+                <div>
+                    <button id="btnLogin" class="btn btn-outline-light">Iniciar Sesión</button>
+                    <button id="btnLogout" class="btn btn-danger d-none">Cerrar Sesión</button>
                 </div>
-              </form>
             </div>
-          </div>
         </div>
-      </div>
+    </header>
+
+    <div class="container mt-4">
+        <div class="row">
+            <!-- Sidebar de Categorías -->
+            <nav class="col-md-3 col-lg-2 d-md-block bg-light sidebar">
+                <div class="position-sticky pt-3">
+                    <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+                        <span>Categorías</span>
+                    </h6>
+                    <ul class="nav flex-column" id="categoriesNav">
+                        <!-- Las categorías se cargarán aquí con JS -->
+                    </ul>
+                    
+                    <!-- Panel de Administración -->
+                    <div class="admin-panel mt-4" style="display: none;">
+                        <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mb-1 text-muted">
+                            <span>Administración</span>
+                        </h6>
+                        <ul class="nav flex-column">
+                            <li class="nav-item">
+                                <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#productModal">Nuevo Producto</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#categoriaModal">Nueva Categoría</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Contenido Principal -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                <h2 id="productsTitle" class="mt-4">Todos los Productos</h2>
+                <div class="row" id="productsGrid">
+                    <!-- Los productos se cargarán aquí con JS -->
+                </div>
+            </main>
+        </div>
     </div>
 
-    <!-- PANEL SUPER -->
-    <div class="super-panel my-5">
-      <hr>
-      <h2 class="text-center mb-4">Panel de Superusuario</h2>
-      <div class="card">
-        <div class="card-header"><i class="bi bi-people"></i> Gestión de Usuarios</div>
-        <div class="card-body">
-          <form id="formUsuario" class="row g-3 align-items-end">
-            <div class="col-md-4">
-              <label class="form-label">Username</label>
-              <input id="userUsername" class="form-control" required>
+    <!-- Modal de Detalles del Producto -->
+    <div class="modal fade" id="detalleModal" tabindex="-1" aria-labelledby="detalleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="detalleTitle"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-8" id="detalleImagenes">
+                            <!-- Imágenes del producto -->
+                        </div>
+                        <div class="col-md-4">
+                            <ul class="list-group" id="detalleInfo">
+                                <!-- Detalles del producto -->
+                            </ul>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="col-md-4">
-              <label class="form-label">Password</label>
-              <input id="userPassword" type="password" class="form-control" required>
-            </div>
-            <div class="col-md-2">
-              <label class="form-label">Rol</label>
-              <select id="userRole" class="form-select">
-                <option value="user">Usuario</option>
-                <option value="admin">Admin</option>
-                <option value="super">Super</option>
-              </select>
-            </div>
-            <div class="col-md-2">
-              <button class="btn btn-info w-100" type="submit">Crear</button>
-            </div>
-          </form>
         </div>
-        <ul id="userList" class="list-group list-group-flush"></ul>
-      </div>
     </div>
-  </div>
 
-  <!-- MODALES (sin tocar lógica) -->
-  <!-- Login -->
-  <div class="modal fade" id="loginModal" tabindex="-1">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Iniciar Sesión</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+    <!-- Modal para Crear/Editar Producto -->
+    <div class="modal fade" id="productModal" tabindex="-1" aria-labelledby="productModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="productModalTitle">Nuevo Producto</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="formProducto">
+                    <div class="modal-body">
+                        <input type="hidden" id="prodId">
+                        <div class="mb-3">
+                            <label for="prodNombre" class="form-label">Nombre</label>
+                            <input type="text" class="form-control" id="prodNombre" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="prodPrecio" class="form-label">Precio</label>
+                            <input type="number" step="0.01" class="form-control" id="prodPrecio" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="prodStock" class="form-label">Stock</label>
+                            <input type="number" class="form-control" id="prodStock" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="prodCategoria" class="form-label">Categoría</label>
+                            <select class="form-select" id="prodCategoria">
+                                <!-- Las categorías se cargarán aquí con JS -->
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="prodDescripcion" class="form-label">Descripción</label>
+                            <textarea class="form-control" id="prodDescripcion" rows="3"></textarea>
+                        </div>
+                        <!-- CAMBIO: Añadido campo para subir imagen -->
+                        <div class="mb-3">
+                            <label for="prodImagen" class="form-label">Imagen del Producto</label>
+                            <input class="form-control" type="file" id="prodImagen" accept="image/*">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Guardar</button>
+                    </div>
+                </form>
+            </div>
         </div>
-        <div class="modal-body">
-          <form id="formLogin">
-            <input id="loginUser" class="form-control mb-2" placeholder="Usuario (ej: admin)" required>
-            <input id="loginPass" type="password" class="form-control mb-2" placeholder="Contraseña (ej: admin123)" required>
-            <button class="btn btn-primary w-100">Ingresar</button>
-          </form>
-          <p id="loginMsg" class="text-danger mt-2 text-center"></p>
-        </div>
-      </div>
     </div>
-  </div>
 
-  <!-- Modal Producto -->
-  <div class="modal fade" id="productModal" tabindex="-1">
-    <div class="modal-dialog modal-lg">
-      <div class="modal-content">
-        <form id="formProducto">
-          <div class="modal-header">
-            <h5 class="modal-title" id="productModalTitle">Nuevo Producto</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-          </div>
-          <div class="modal-body">
-            <input type="hidden" id="prodId">
-            <div class="mb-3">
-              <label class="form-label">Nombre</label>
-              <input id="prodNombre" class="form-control" required>
+    <!-- Modal para Crear Categoría -->
+    <div class="modal fade" id="categoriaModal" tabindex="-1" aria-labelledby="categoriaModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="categoriaModalLabel">Nueva Categoría</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="formCategoria">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="catNombre" class="form-label">Nombre de la Categoría</label>
+                            <input type="text" class="form-control" id="catNombre" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Crear</button>
+                    </div>
+                </form>
             </div>
-            <div class="row">
-              <div class="col-md-6 mb-3">
-                <label class="form-label">Precio (S/)</label>
-                <input id="prodPrecio" type="number" step="0.01" class="form-control" required>
-              </div>
-              <div class="col-md-6 mb-3">
-                <label class="form-label">Stock</label>
-                <input id="prodStock" type="number" class="form-control" required>
-              </div>
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Categoría</label>
-              <select id="prodCategoria" class="form-select"></select>
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Descripción</label>
-              <textarea id="prodDescripcion" class="form-control" rows="3"></textarea>
-            </div>
-            <div class="mb-3">
-              <label class="form-label">URL de la Imagen Principal</label>
-              <input id="prodImageUrl" type="url" class="form-control" placeholder="https://ejemplo.com/imagen.jpg">
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-            <button type="submit" class="btn btn-primary">Guardar</button>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
-
-  <!-- Modal Detalle -->
-  <div class="modal fade" id="detalleModal" tabindex="-1">
-    <div class="modal-dialog modal-lg">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="detalleTitle"></h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
-        <div class="modal-body">
-          <div class="row">
-            <div class="col-md-7">
-              <h6>Imágenes</h6>
-              <div id="detalleImagenes" class="row g-2"></div>
-              <form id="formImagen" class="input-group mt-3 admin-panel">
-                <input type="hidden" id="imgProductoId">
-                <input id="imgUrl" type="url" class="form-control" placeholder="URL de nueva imagen" required>
-                <button class="btn btn-success">Añadir</button>
-              </form>
-            </div>
-            <div class="col-md-5">
-              <h6>Detalles</h6>
-              <ul id="detalleInfo" class="list-group"></ul>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
-  </div>
 
-  <!-- Bootstrap JS -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Modal de Login -->
+    <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="loginModalLabel">Iniciar Sesión</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="formLogin">
+                    <div class="modal-body">
+                        <div id="loginMsg" class="mb-2 text-center"></div>
+                        <div class="mb-3">
+                            <label for="loginUser" class="form-label">Usuario</label>
+                            <input type="text" class="form-control" id="loginUser" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="loginPass" class="form-label">Contraseña</label>
+                            <input type="password" class="form-control" id="loginPass" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Entrar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Tu JavaScript personalizado -->
+    <script src="js/index.js"></script>
 </body>
 </html>
