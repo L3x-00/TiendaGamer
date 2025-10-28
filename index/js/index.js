@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let allProducts = [];
     let allCategories = [];
-    let loginModal; // <-- CAMBIO IMPORTANTE: Se declara aquí, pero no se crea todavía.
+    // La variable loginModal ya no se necesita aquí, la manejaremos bajo demanda.
 
     // --- FUNCIONES DE LA API ---
     async function apiFetch(endpoint, options = {}) {
@@ -251,14 +251,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- CONFIGURACIÓN DE LISTENERS ---
     function setupEventListeners() {
-        // <-- CAMBIO IMPORTANTE: Modificamos el listener del botón de login
         if (btnLogin) {
             btnLogin.addEventListener('click', () => {
-                // Si el modal no se ha creado todavía, lo creamos ahora.
-                if (!loginModal) {
-                    loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
+                // Comprobación de seguridad para asegurar que Bootstrap está cargado
+                if (typeof bootstrap === 'undefined' || typeof bootstrap.Modal === 'undefined') {
+                    console.error("Error: Bootstrap o su componente Modal no está cargado.");
+                    alert("Error: La interfaz no se ha cargado correctamente. Por favor, recarga la página.");
+                    return;
                 }
-                loginModal.show();
+                
+                const modalElement = document.getElementById('loginModal');
+                const modal = bootstrap.Modal.getOrCreateInstance(modalElement);
+                modal.show();
             });
         }
         if (btnLogout) btnLogout.addEventListener('click', logout);
