@@ -62,14 +62,11 @@ document.addEventListener('DOMContentLoaded', () => {
     async function fetchCategorias() {
         allCategories = await apiFetch('categorias');
         renderMenuCategorias(allCategories);
-        updateCategorySelect(); // <-- NUEVO: Llama a la función para poblar el select
+        updateCategorySelect();
     }
 
     async function fetchProductoDetalle(idProducto) {
-        console.log("fetchProductoDetalle llamado con ID:", idProducto);
-        const producto = allProducts.find(p => p.id == idProducto);
-        console.log("Producto encontrado:", producto);
-        if (!producto) return;
+        const producto = await apiFetch(`productos/${idProducto}`);
         renderProductoDetalle(producto);
     }
 
@@ -77,11 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function updateCategorySelect() {
         const prodCategoriaSelect = document.getElementById('prodCategoria');
         if (!prodCategoriaSelect) return;
-
-        // Limpia las opciones existentes
         prodCategoriaSelect.innerHTML = '<option value="">Selecciona una categoría</option>';
-
-        // Añade las categorías como opciones
         allCategories.forEach(cat => {
             const option = document.createElement('option');
             option.value = cat.id;
@@ -124,7 +117,6 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
         }).join('');
 
-        // Listener para "Ver detalle"
         document.querySelectorAll('.ver-detalle-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.stopPropagation();
@@ -134,7 +126,6 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
 
-        // NUEVO: Listeners para "Editar" y "Eliminar"
         document.querySelectorAll('.edit-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 const productoId = e.target.dataset.id;
@@ -235,9 +226,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const isEditing = !!productId;
         const productData = { 
             nombre: document.getElementById('prodNombre').value, 
-            precio: parseFloat(document.getElementById('prodPrecio').value), // <-- NUEVO: Asegura que sea número
-            stock: parseInt(document.getElementById('prodStock').value), // <-- NUEVO: Asegura que sea número
-            categoria_id: document.getElementById('prodCategoria').value ? parseInt(document.getElementById('prodCategoria').value) : null, // <-- NUEVO: Asegura que sea número o nulo
+            precio: parseFloat(document.getElementById('prodPrecio').value), 
+            stock: parseInt(document.getElementById('prodStock').value), 
+            categoria_id: document.getElementById('prodCategoria').value ? parseInt(document.getElementById('prodCategoria').value) : null, 
             descripcion: document.getElementById('prodDescripcion').value 
         };
         apiFetch(isEditing ? `productos/${productId}` : 'productos', { method: isEditing ? 'PUT' : 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(productData) }).then(() => {

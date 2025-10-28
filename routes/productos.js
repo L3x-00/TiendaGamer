@@ -23,7 +23,6 @@ router.get('/', async (req, res) => {
   }
 });
 
-// --- NUEVA RUTA AÑADIDA ---
 // GET /productos/:id (público) - Devuelve un solo producto por su ID
 router.get('/:id', async (req, res) => {
   try {
@@ -39,12 +38,12 @@ router.get('/:id', async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
-// -----------------------------
 
-// POST /productos (admin|super)
+// POST /productos (admin|super) - Crea un nuevo producto
 router.post('/', requireRole('admin','super'), async (req, res) => {
-  const { nombre, descripcion = null, precio = 0.0, stock = 0, categoria_id = null } = req.body;
+  const { nombre, descripcion, precio, stock, categoria_id } = req.body;
   try {
+    // CORRECCIÓN: No se inserta el 'id'. La base de datos lo genera automáticamente.
     const result = await db.query(
       'INSERT INTO productos (nombre, descripcion, precio, stock, categoria_id) VALUES ($1, $2, $3, $4, $5) RETURNING *', 
       [nombre, descripcion, precio, stock, categoria_id]
@@ -55,7 +54,7 @@ router.post('/', requireRole('admin','super'), async (req, res) => {
   }
 });
 
-// PUT /productos/:id (admin|super)
+// PUT /productos/:id (admin|super) - Actualiza un producto existente
 router.put('/:id', requireRole('admin','super'), async (req, res) => {
   const { id } = req.params;
   const { nombre, descripcion, precio, stock, categoria_id } = req.body;
@@ -70,7 +69,7 @@ router.put('/:id', requireRole('admin','super'), async (req, res) => {
   }
 });
 
-// DELETE /productos/:id (admin|super)
+// DELETE /productos/:id (admin|super) - Elimina un producto
 router.delete('/:id', requireRole('admin','super'), async (req, res) => {
   const { id } = req.params;
   try {
