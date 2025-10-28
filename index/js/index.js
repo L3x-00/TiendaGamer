@@ -22,6 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let allProducts = [];
     let allCategories = [];
+    let loginModal; // <-- CAMBIO IMPORTANTE: Se declara aquí, pero no se crea todavía.
 
     // --- FUNCIONES DE LA API ---
     async function apiFetch(endpoint, options = {}) {
@@ -250,7 +251,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- CONFIGURACIÓN DE LISTENERS ---
     function setupEventListeners() {
-        if (btnLogin) btnLogin.addEventListener('click', () => loginModal.show());
+        // <-- CAMBIO IMPORTANTE: Modificamos el listener del botón de login
+        if (btnLogin) {
+            btnLogin.addEventListener('click', () => {
+                // Si el modal no se ha creado todavía, lo creamos ahora.
+                if (!loginModal) {
+                    loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
+                }
+                loginModal.show();
+            });
+        }
         if (btnLogout) btnLogout.addEventListener('click', logout);
         if (formLogin) formLogin.addEventListener('submit', handleLogin);
         if (formCategoria) formCategoria.addEventListener('submit', handleCreateCategory);
