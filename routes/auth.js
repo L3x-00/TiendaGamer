@@ -25,35 +25,5 @@ router.post('/login', async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
-  // --- RUTA TEMPORAL PARA CREAR EL ADMINISTRADOR ---
-  // ¡MUY IMPORTANTE! Borrar esta ruta después de usarla.
-  router.get('/create-admin-temporal', async (req, res) => {
-    try {
-      const db = require('../db');
-      const bcrypt = require('bcryptjs');
-      const username = 'admin';
-      const plainPassword = 'admin123';
-      const role = 'super';
-      const hashedPassword = await bcrypt.hash(plainPassword, 10);
-
-      // Borra cualquier admin existente para evitar duplicados
-      await db.query('DELETE FROM usuarios WHERE username = $1', [username]);
-      
-      // Crea el nuevo administrador
-      const result = await db.query(
-        'INSERT INTO usuarios (username, password, role) VALUES ($1, $2, $3) RETURNING id, username, role',
-        [username, hashedPassword, role]
-      );
-      
-      res.status(201).json({ 
-        message: 'Usuario admin creado con éxito', 
-        user: result.rows[0] 
-      });
-    } catch (err) {
-      console.error('Error al crear admin:', err);
-      res.status(500).json({ error: 'Error interno del servidor al crear admin' });
-    }
-  });
-  // ---------------------------------------------------------
 
 module.exports = router;

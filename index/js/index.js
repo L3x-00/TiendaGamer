@@ -185,7 +185,8 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 // <-- CAMBIO 3: Construimos la URL completa de la imagen estática
                 imagenesHtml = imagenes.map(img => {
-                    const imageUrl = `${API_BASE_URL}/uploads/${img.nombre}`;
+                     // Construimos la URL completa a la imagen estática usando la propiedad 'url'
+                    const imageUrl = `${API_BASE_URL}/uploads/${img.url}`;
                     return `<div class="col-6 mb-2"><img src="${imageUrl}" class="img-fluid rounded"></div>`;
                 }).join('');
             }
