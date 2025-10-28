@@ -2,7 +2,8 @@
 
 document.addEventListener('DOMContentLoaded', () => {
     // --- VARIABLES GLOBALES ---
-    const API_BASE_URL = ''; 
+    // <-- CAMBIO 1: Define la URL base de tu API en Render
+    const API_BASE_URL = 'https://tiendagamer-api.onrender.com'; 
     const productsGrid = document.getElementById('productsGrid');
     const categoriesNav = document.getElementById('categoriesNav');
     const productsTitle = document.getElementById('productsTitle');
@@ -33,8 +34,14 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const response = await fetch(url, options);
             if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.error || `Error en la API: ${response.statusText}`);
+                // Si la respuesta no es JSON (ej. una página de error HTML), manejarlo mejor
+                const contentType = response.headers.get("content-type");
+                if (contentType && contentType.indexOf("application/json") !== -1) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || `Error en la API: ${response.statusText}`);
+                } else {
+                    throw new Error(`Error en la API: ${response.statusText} (${response.status})`);
+                }
             }
             return await response.json();
         } catch (error) {
@@ -171,11 +178,16 @@ document.addEventListener('DOMContentLoaded', () => {
         let imagenesHtml = '<p>Cargando imágenes...</p>';
         detalleImagenes.innerHTML = imagenesHtml;
         
-        apiFetch(`/imagenes/${producto.id}`).then(imagenes => {
+        // <-- CAMBIO 2: Quitamos la barra inicial del endpoint
+        apiFetch(`imagenes/${producto.id}`).then(imagenes => {
             if (imagenes.length === 0) {
                 imagenesHtml = '<p>Este producto no tiene imágenes.</p>';
             } else {
-                imagenesHtml = imagenes.map(img => `<div class="col-6 mb-2"><img src="${img.url}" class="img-fluid rounded"></div>`).join('');
+                // <-- CAMBIO 3: Construimos la URL completa de la imagen estática
+                imagenesHtml = imagenes.map(img => {
+                    const imageUrl = `${API_BASE_URL}/uploads/${img.nombre}`;
+                    return `<div class="col-6 mb-2"><img src="${imageUrl}" class="img-fluid rounded"></div>`;
+                }).join('');
             }
             detalleImagenes.innerHTML = imagenesHtml;
         }).catch(err => {

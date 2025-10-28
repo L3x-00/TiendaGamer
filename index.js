@@ -3,6 +3,7 @@
 // --- IMPORTACIONES ---
 const express = require('express');
 const cors = require('cors');
+// <-- CAMBIO 1: Corregir la importación del módulo 'path'
 const path = require('path'); // Necesario para manejar rutas de archivos
 
 // Importamos las rutas desde la carpeta 'routes'
@@ -24,9 +25,13 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
-// --- SERVIR EL FRONTEND ---
-// Le decimos a Express que sirva los archivos estáticos desde la carpeta 'index'
+// --- SERVIR ARCHIVOS ESTÁTICOS ---
+// Le decimos a Express que sirva los archivos estáticos desde la carpeta 'index' (el frontend)
 app.use(express.static(path.join(__dirname, 'index')));
+
+// <-- CAMBIO 2: Añadir la ruta para servir las imágenes subidas
+// Le decimos a Express que cualquier petición a /uploads sea atendida por la carpeta 'uploads'
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 
 // --- MONTAR LAS RUTAS DE LA API ---
