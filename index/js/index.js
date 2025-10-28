@@ -165,7 +165,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- FUNCIONES DE FORMULARIOS Y AUTENTICACIÓN ---
-    function handleLogin(e) {
+    async function handleLogin(e) {
         e.preventDefault();
         loginMsg.textContent = '';
         try {
@@ -182,7 +182,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function handleCreateCategory(e) {
+    async function handleCreateCategory(e) {
         e.preventDefault();
         const nombre = catNombre.value;
         if (!nombre) return;
@@ -192,7 +192,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }).catch(err => { alert('Error al crear categoría'); });
     }
 
-    function handleCreateOrUpdateProduct(e) {
+    async function handleCreateOrUpdateProduct(e) {
         e.preventDefault();
         const productId = document.getElementById('prodId').value;
         const isEditing = !!productId;
