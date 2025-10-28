@@ -17,12 +17,29 @@ router.get('/', async (req, res) => {
       LEFT JOIN categorias c ON p.categoria_id = c.id
       ORDER BY p.id DESC
     `);
-    // CAMBIO: El alias en la SQL ahora es 'firstimageurl' para que coincida con el frontend.
     res.json(result.rows);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
+
+// --- NUEVA RUTA AÑADIDA ---
+// GET /productos/:id (público) - Devuelve un solo producto por su ID
+router.get('/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const result = await db.query('SELECT * FROM productos WHERE id = $1', [id]);
+    
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Producto no encontrado' });
+    }
+    
+    res.json(result.rows[0]);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+// -----------------------------
 
 // POST /productos (admin|super)
 router.post('/', requireRole('admin','super'), async (req, res) => {

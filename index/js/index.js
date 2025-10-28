@@ -48,7 +48,6 @@ document.addEventListener('DOMContentLoaded', () => {
         renderProductos(allProducts);
     }
 
-    // CAMBIO: Esta función ahora filtra localmente, en lugar de llamar a una API que no existe.
     function fetchProductosPorCategoria(idCategoria) {
         const productos = (idCategoria === 'all')
             ? allProducts
@@ -73,7 +72,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         
         productsGrid.innerHTML = productos.map(producto => {
-            // CAMBIO: Ahora busca 'firstimageurl' que coincide con el backend.
             const imagenPrincipal = producto.firstimageurl || 'https://via.placeholder.com/300x200.png?text=Sin+Imagen';
             return `
                 <div class="col-md-6 col-lg-4">
@@ -114,7 +112,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 const categoriaId = e.target.dataset.id;
                 const categoriaNombre = e.target.textContent;
                 productsTitle.textContent = `Productos de: ${categoriaNombre}`;
-                // CAMBIO: Llama a la función local de filtrado.
                 fetchProductosPorCategoria(categoriaId);
             });
         });
@@ -196,7 +193,17 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // --- INICIALIZACIÓN ---
     fetchProductos();
     fetchCategorias();
     checkLoginStatus();
+
+    // --- CONFIGURACIÓN DE LISTENERS ---
+    // He movido la configuración de los listeners al final para asegurar que todos los elementos del DOM estén listos.
+    // El listener del botón de login ahora usa addEventListener para mayor robustez.
+    if (btnLogin) {
+        btnLogin.addEventListener('click', () => {
+            loginModal.show();
+        });
+    }
 });

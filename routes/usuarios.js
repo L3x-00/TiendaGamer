@@ -24,7 +24,7 @@ router.post('/', requireRole('super'), async (req, res) => {
 // GET /usuarios -> lista usuarios (solo super)
 router.get('/', requireRole('super'), async (req, res) => {
   try {
-    const result = await db.query('SELECT id, username, role, creado_en FROM usuarios ORDER BY id DESC');
+    const result = await db.query('SELECT id, username, role, created_at FROM usuarios ORDER BY id DESC');
     res.json(result.rows);
   } catch (err) {
     res.status(500).json({ error: err.message });
