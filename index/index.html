@@ -1,21 +1,278 @@
-!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OfrendaManía Gamer</title>
+    
+    <!-- Google Fonts: Orbitron para títulos, Roboto para cuerpo -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="css/style.css"> <!-- Tu CSS personalizado si lo tienes -->
+
+    <!-- --- ESTILOS PERSONALIZADOS GAMER --- -->
+    <style>
+        :root {
+            --bg-primary: #0c0c0c;
+            --bg-secondary: #1a1a1a;
+            --bg-card: #212529;
+            --accent-color: #00d9ff;
+            --accent-hover: #00a8cc;
+            --text-primary: #ffffff;
+            --text-secondary: #adb5bd;
+            --border-color: #343a40;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: 'Roboto', sans-serif;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(0, 217, 255, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 90% 80%, rgba(0, 217, 255, 0.05) 0%, transparent 50%);
+            background-attachment: fixed;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+        }
+
+        /* --- HEADER --- */
+        .main-header {
+            background-color: var(--bg-secondary);
+            border-bottom: 2px solid var(--accent-color);
+            padding: 1rem 0;
+            box-shadow: 0 4px 15px rgba(0, 217, 255, 0.2);
+        }
+        .main-header h1 {
+            color: var(--accent-color);
+            text-shadow: 0 0 10px var(--accent-color);
+            font-weight: 900;
+            letter-spacing: 2px;
+        }
+        .main-header .btn {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 400;
+            border-radius: 0;
+            padding: 0.5rem 1.5rem;
+            transition: all 0.3s ease;
+        }
+        .main-header .btn-outline-light {
+            border-color: var(--accent-color);
+            color: var(--accent-color);
+        }
+        .main-header .btn-outline-light:hover {
+            background-color: var(--accent-color);
+            border-color: var(--accent-color);
+            color: var(--bg-primary);
+            box-shadow: 0 0 15px var(--accent-color);
+        }
+        .main-header .btn-danger {
+            background-color: #e74c3c;
+            border-color: #e74c3c;
+        }
+        .main-header .btn-danger:hover {
+            background-color: #c0392b;
+            border-color: #c0392b;
+        }
+
+        /* --- SIDEBAR --- */
+        .sidebar {
+            background-color: var(--bg-secondary);
+            border-right: 1px solid var(--border-color);
+            min-height: calc(100vh - 86px); /* Ajustar altura */
+            padding: 1.5rem 1rem;
+        }
+        .sidebar .sidebar-heading {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            font-family: 'Orbitron', sans-serif;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 1rem;
+        }
+        .sidebar .nav-link {
+            color: var(--text-secondary);
+            padding: 0.75rem 1rem;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            margin-bottom: 0.5rem;
+        }
+        .sidebar .nav-link:hover, .sidebar .nav-link.active {
+            background-color: var(--bg-card);
+            color: var(--accent-color);
+            text-shadow: 0 0 5px var(--accent-color);
+        }
+        .sidebar .admin-panel .nav-link {
+            color: #28a745;
+        }
+        .sidebar .admin-panel .nav-link:hover {
+            color: #34ce57;
+        }
+        .categoria-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .categoria-item .categoria-link {
+            flex-grow: 1;
+        }
+        .delete-cat-btn {
+            color: #dc3545;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .categoria-item:hover .delete-cat-btn {
+            opacity: 1;
+        }
+        .delete-cat-btn:hover {
+            color: #f8d7da;
+        }
+
+        /* --- MAIN CONTENT --- */
+        main {
+            padding: 2rem;
+        }
+        #productsTitle {
+            color: var(--text-primary);
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 2rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--accent-color);
+            display: inline-block;
+        }
+
+        /* --- PRODUCT CARDS --- */
+        .producto-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        .producto-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 20px rgba(0, 217, 255, 0.3);
+            border-color: var(--accent-color);
+        }
+        .producto-card .card-img-top {
+            height: 200px;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+        .producto-card:hover .card-img-top {
+            transform: scale(1.05);
+        }
+        .producto-card .card-body {
+            flex-grow: 1;
+            padding: 1.5rem;
+        }
+        .producto-card .card-title {
+            color: var(--text-primary);
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+        .producto-card .card-text {
+            color: var(--text-secondary);
+        }
+        .producto-card h4 {
+            color: var(--accent-color);
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 900;
+        }
+        .producto-card .btn {
+            font-family: 'Roboto', sans-serif;
+            font-weight: 700;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+        .producto-card .btn-primary {
+            background-color: var(--accent-color);
+            border-color: var(--accent-color);
+            color: var(--bg-primary);
+        }
+        .producto-card .btn-primary:hover {
+            background-color: var(--accent-hover);
+            border-color: var(--accent-hover);
+            box-shadow: 0 0 10px var(--accent-hover);
+        }
+        .producto-card .btn-outline-secondary {
+            border-color: #6c757d;
+            color: #6c757d;
+        }
+        .producto-card .btn-outline-secondary:hover {
+            background-color: #6c757d;
+            border-color: #6c757d;
+        }
+        .producto-card .btn-outline-danger {
+            border-color: #dc3545;
+            color: #dc3545;
+        }
+        .producto-card .btn-outline-danger:hover {
+            background-color: #dc3545;
+            border-color: #dc3545;
+        }
+
+        /* --- MODALS --- */
+        .modal-content {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+        }
+        .modal-header {
+            border-bottom: 1px solid var(--border-color);
+        }
+        .modal-footer {
+            border-top: 1px solid var(--border-color);
+        }
+        .modal-title {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--accent-color);
+        }
+        .form-control, .form-select {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+        }
+        .form-control:focus, .form-select:focus {
+            background-color: var(--bg-card);
+            border-color: var(--accent-color);
+            color: var(--text-primary);
+            box-shadow: 0 0 0 0.2rem rgba(0, 217, 255, 0.25);
+        }
+        .form-label {
+            color: var(--text-secondary);
+            font-weight: 300;
+        }
+        .form-check-input:checked {
+            background-color: var(--accent-color);
+            border-color: var(--accent-color);
+        }
+        
+    </style>
 </head>
 <body>
 
-    <header class="bg-dark text-white p-3">
+    <!-- --- HEADER --- -->
+    <header class="main-header">
         <div class="container">
             <div class="d-flex justify-content-between align-items-center">
-                <h1 class="h3 mb-0">OfrendaManía Gamer</h1>
+                <h1 class="h3 mb-0">OFRENDA MANÍA GAMER</h1>
                 <div>
                     <button id="btnLogin" class="btn btn-outline-light">Iniciar Sesión</button>
                     <button id="btnLogout" class="btn btn-danger d-none">Cerrar Sesión</button>
@@ -24,38 +281,34 @@
         </div>
     </header>
 
-    <div class="container mt-4">
+    <div class="container-fluid">
         <div class="row">
-            <!-- Sidebar de Categorías -->
-            <nav class="col-md-3 col-lg-2 d-md-block bg-light sidebar">
-                <div class="position-sticky pt-3">
-                    <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
-                        <span>Categorías</span>
-                    </h6>
-                    <ul class="nav flex-column" id="categoriesNav">
+            <!-- --- SIDEBAR --- -->
+            <nav class="col-md-3 col-lg-2 d-md-block sidebar">
+                <div class="position-sticky">
+                    <h6 class="sidebar-heading">Categorías</h6>
+                    <div id="categoriesNav">
                         <!-- Las categorías se cargarán aquí con JS -->
-                    </ul>
+                    </div>
                     
                     <!-- Panel de Administración -->
                     <div class="admin-panel mt-4" style="display: none;">
-                        <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mb-1 text-muted">
-                            <span>Administración</span>
-                        </h6>
+                        <h6 class="sidebar-heading">Administración</h6>
                         <ul class="nav flex-column">
                             <li class="nav-item">
-                                <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#productModal">Nuevo Producto</a>
+                                <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#productModal"><i class="bi bi-plus-circle me-2"></i>Nuevo Producto</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#categoriaModal">Nueva Categoría</a>
+                                <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#categoriaModal"><i class="bi bi-tag me-2"></i>Nueva Categoría</a>
                             </li>
                         </ul>
                     </div>
                 </div>
             </nav>
 
-            <!-- Contenido Principal -->
+            <!-- --- CONTENIDO PRINCIPAL --- -->
             <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-                <h2 id="productsTitle" class="mt-4">Todos los Productos</h2>
+                <h2 id="productsTitle">Todos los Productos</h2>
                 <div class="row" id="productsGrid">
                     <!-- Los productos se cargarán aquí con JS -->
                 </div>
@@ -63,7 +316,7 @@
         </div>
     </div>
 
-    <!-- Modal de Detalles del Producto -->
+    <!-- --- MODAL DE DETALLES DEL PRODUCTO --- -->
     <div class="modal fade" id="detalleModal" tabindex="-1" aria-labelledby="detalleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -87,7 +340,7 @@
         </div>
     </div>
 
-    <!-- Modal para Crear/Editar Producto -->
+    <!-- --- MODAL PARA CREAR/EDITAR PRODUCTO --- -->
     <div class="modal fade" id="productModal" tabindex="-1" aria-labelledby="productModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -121,7 +374,7 @@
                             <textarea class="form-control" id="prodDescripcion" rows="3"></textarea>
                         </div>
                         
-                        <!-- CAMBIO: Nuevo campo para imagen con opción de archivo o URL -->
+                        <!-- Campo para imagen con opción de archivo o URL -->
                         <div class="mb-3">
                             <label class="form-label">Imagen del Producto</label>
                             
@@ -155,7 +408,7 @@
         </div>
     </div>
 
-    <!-- Modal para Crear Categoría -->
+    <!-- --- MODAL PARA CREAR CATEGORÍA --- -->
     <div class="modal fade" id="categoriaModal" tabindex="-1" aria-labelledby="categoriaModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -179,7 +432,7 @@
         </div>
     </div>
 
-    <!-- Modal de Login -->
+    <!-- --- MODAL DE LOGIN --- -->
     <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">

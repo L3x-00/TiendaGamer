@@ -141,26 +141,53 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // CAMBIO: Modificar renderMenuCategorias para añadir botón de eliminar
     function renderMenuCategorias(categorias) {
         if (!categorias || categorias.length === 0) return;
+        
+        const role = localStorage.getItem('role');
+        const isAdmin = role === 'admin' || role === 'super';
+
         categoriesNav.innerHTML = '<a href="#" class="list-group-item list-group-item-action active" data-id="all">Todos</a>';
         categorias.forEach(categoria => {
-            categoriesNav.innerHTML += `<a href="#" class="list-group-item list-group-item-action categoria-link" data-id="${categoria.id}">${categoria.nombre}</a>`;
+            let deleteButton = '';
+            if (isAdmin) {
+                deleteButton = `<button class="btn btn-sm btn-outline-danger delete-cat-btn" data-id="${categoria.id}" title="Eliminar Categoría"><i class="bi bi-trash"></i></button>`;
+            }
+            categoriesNav.innerHTML += `
+                <div class="d-flex justify-content-between align-items-center list-group-item list-group-item-action categoria-item" data-id="${categoria.id}">
+                    <a href="#" class="categoria-link flex-grow-1">${categoria.nombre}</a>
+                    ${deleteButton}
+                </div>
+            `;
         });
+
+        // Listener para el link de la categoría
         document.querySelectorAll('.categoria-link').forEach(link => {
             link.addEventListener('click', (e) => {
                 e.preventDefault();
-                const categoriaId = e.target.dataset.id;
+                const categoriaItem = e.target.closest('.categoria-item');
+                const categoriaId = categoriaItem.dataset.id;
                 const categoriaNombre = e.target.textContent;
                 productsTitle.textContent = `Productos de: ${categoriaNombre}`;
                 fetchProductosPorCategoria(categoriaId);
             });
         });
+
+        // CAMBIO: Listener para el nuevo botón de eliminar
+        document.querySelectorAll('.delete-cat-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation(); // Evita que se dispare el click del link
+                const categoriaId = e.target.closest('.delete-cat-btn').dataset.id;
+                deleteCategory(categoriaId);
+            });
+        });
+
         categoriesNav.querySelector('a[data-id="all"]').addEventListener('click', (e) => {
             e.preventDefault();
             categoriesNav.querySelector('.active').classList.remove('active');
             e.target.classList.add('active');
-            productsTitle.textContent = 'Todos los productos';
+            productsTitle.textContent = 'Todos los Productos';
             renderProductos(allProducts);
         });
     }
@@ -223,7 +250,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }).catch(err => { alert('Error al crear categoría'); });
     }
 
-    // CAMBIO: Función modificada para manejar archivo o URL
     async function handleCreateOrUpdateProduct(e) {
         e.preventDefault();
         const productId = document.getElementById('prodId').value;
@@ -236,7 +262,6 @@ document.addEventListener('DOMContentLoaded', () => {
         formData.append('categoria_id', document.getElementById('prodCategoria').value);
         formData.append('descripcion', document.getElementById('prodDescripcion').value);
 
-        // Lógica para manejar la imagen (archivo o URL)
         const tipoArchivo = document.getElementById('tipoArchivo').checked;
         if (tipoArchivo) {
             const imagenInput = document.getElementById('prodImagen');
@@ -273,7 +298,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // CAMBIO: Nueva función para manejar el cambio de radio buttons
     function setupImageTypeToggle() {
         const tipoArchivoRadio = document.getElementById('tipoArchivo');
         const tipoUrlRadio = document.getElementById('tipoUrl');
@@ -320,6 +344,22 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (err) { alert("Error al eliminar el producto"); }
     }
 
+    // CAMBIO: Nueva función para eliminar categorías
+    async function deleteCategory(id) {
+        if (!confirm("¿Estás seguro de que quieres eliminar esta categoría? Si hay productos asociados, la eliminación fallará.")) {
+            return;
+        }
+        try {
+            await apiFetch(`categorias/${id}`, { method: 'DELETE' });
+            // Recargar categorías y productos para actualizar la UI
+            fetchCategorias();
+            fetchProductos();
+        } catch (err) {
+            console.error("Error al eliminar la categoría:", err);
+            alert("Error al eliminar la categoría. Es posible que tenga productos asociados. Revisa la consola para más detalles.");
+        }
+    }
+
     function checkLoginStatus() {
         const token = localStorage.getItem('token');
         const role = localStorage.getItem('role');
@@ -361,5 +401,5 @@ document.addEventListener('DOMContentLoaded', () => {
     fetchCategorias();
     checkLoginStatus();
     setupEventListeners();
-    setupImageTypeToggle(); // <-- CAMBIO: Llamar a la nueva función
+    setupImageTypeToggle();
 });
