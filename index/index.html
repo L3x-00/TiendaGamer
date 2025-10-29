@@ -136,7 +136,31 @@
         .delete-cat-btn:hover {
             color: #f8d7da;
         }
+        /* --- ESTILOS PARA LOS BOTONES DE CATEGORÍA --- */
+        .categoria-btn {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            padding: 0.75rem 1rem;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            font-family: 'Roboto', sans-serif;
+            font-weight: 400;
+            text-align: left; /* Asegura que el texto esté alineado a la izquierda */
+        }
 
+        .categoria-btn:hover, .categoria-btn.active {
+            background-color: var(--accent-color);
+            border-color: var(--accent-color);
+            color: var(--bg-primary);
+            text-shadow: none;
+            box-shadow: 0 0 10px var(--accent-color);
+            transform: scale(1.02);
+        }
+
+        .categoria-btn i {
+            font-size: 1rem;
+        }
         /* --- MAIN CONTENT --- */
         main {
             padding: 2rem;

@@ -141,54 +141,69 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // CAMBIO: Modificar renderMenuCategorias para añadir botón de eliminar
+    // CAMBIO: Modificar renderMenuCategorias para que genere botones
     function renderMenuCategorias(categorias) {
         if (!categorias || categorias.length === 0) return;
         
         const role = localStorage.getItem('role');
         const isAdmin = role === 'admin' || role === 'super';
 
-        categoriesNav.innerHTML = '<a href="#" class="list-group-item list-group-item-action active" data-id="all">Todos</a>';
+        // Botón "Todos" ahora es un botón real
+        categoriesNav.innerHTML = `
+            <button class="btn categoria-btn active w-100 text-start mb-2" data-id="all">
+                <i class="bi bi-grid-3x3-gap me-2"></i>Todos
+            </button>
+        `;
+        
         categorias.forEach(categoria => {
             let deleteButton = '';
             if (isAdmin) {
                 deleteButton = `<button class="btn btn-sm btn-outline-danger delete-cat-btn" data-id="${categoria.id}" title="Eliminar Categoría"><i class="bi bi-trash"></i></button>`;
             }
-            categoriesNav.innerHTML += `
-                <div class="d-flex justify-content-between align-items-center list-group-item list-group-item-action categoria-item" data-id="${categoria.id}">
-                    <a href="#" class="categoria-link flex-grow-1">${categoria.nombre}</a>
+            
+            // Cada categoría es ahora un botón
+            const categoryButton = `
+                <button class="btn categoria-btn w-100 text-start mb-2 d-flex justify-content-between align-items-center" data-id="${categoria.id}">
+                    <span>${categoria.nombre}</span>
                     ${deleteButton}
-                </div>
+                </button>
             `;
+            categoriesNav.innerHTML += categoryButton;
         });
 
-        // Listener para el link de la categoría
-        document.querySelectorAll('.categoria-link').forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                const categoriaItem = e.target.closest('.categoria-item');
-                const categoriaId = categoriaItem.dataset.id;
-                const categoriaNombre = e.target.textContent;
-                productsTitle.textContent = `Productos de: ${categoriaNombre}`;
-                fetchProductosPorCategoria(categoriaId);
+        // Listener para los botones de categoría
+        document.querySelectorAll('.categoria-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                // Evitar que se dispare si se hace click en el botón de eliminar dentro
+                if (e.target.closest('.delete-cat-btn')) {
+                    return;
+                }
+
+                // Quitar clase active de todos los botones
+                document.querySelectorAll('.categoria-btn').forEach(b => b.classList.remove('active'));
+                // Añadir clase active al botón clickeado
+                btn.classList.add('active');
+
+                const categoriaId = btn.dataset.id;
+                const categoriaNombre = btn.querySelector('span').textContent.trim();
+                
+                if (categoriaId === 'all') {
+                    productsTitle.textContent = 'Todos los Productos';
+                    renderProductos(allProducts);
+                } else {
+                    productsTitle.textContent = `Productos de: ${categoriaNombre}`;
+                    fetchProductosPorCategoria(categoriaId);
+                }
             });
         });
 
-        // CAMBIO: Listener para el nuevo botón de eliminar
+        // Listener para los botones de eliminar categoría (sin cambios)
         document.querySelectorAll('.delete-cat-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
-                e.stopPropagation(); // Evita que se dispare el click del link
+                e.stopPropagation();
                 const categoriaId = e.target.closest('.delete-cat-btn').dataset.id;
                 deleteCategory(categoriaId);
             });
-        });
-
-        categoriesNav.querySelector('a[data-id="all"]').addEventListener('click', (e) => {
-            e.preventDefault();
-            categoriesNav.querySelector('.active').classList.remove('active');
-            e.target.classList.add('active');
-            productsTitle.textContent = 'Todos los Productos';
-            renderProductos(allProducts);
         });
     }
 
@@ -344,7 +359,6 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (err) { alert("Error al eliminar el producto"); }
     }
 
-    // CAMBIO: Nueva función para eliminar categorías
     async function deleteCategory(id) {
         if (!confirm("¿Estás seguro de que quieres eliminar esta categoría? Si hay productos asociados, la eliminación fallará.")) {
             return;
