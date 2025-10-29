@@ -40,7 +40,7 @@ app.use((req, res, next) => {
     }
 
     // <<<--- PON AQUÍ LAS IPs PERMITIDAS DE TU INSTITUTO ---<<<
-    const allowedIPs = ['45.232.149.130', '45.232.149.146', '45.232.149.145']; 
+    const allowedIPs = ['45.232.149.130',,'192.168.1.27', '45.232.149.146', '45.232.149.145']; 
     
     console.log(`[PROD] Modo Producción. Verificando IP: ${clientIP}`);
     
