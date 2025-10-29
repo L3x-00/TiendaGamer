@@ -2,7 +2,6 @@
 
 document.addEventListener('DOMContentLoaded', () => {
     // --- VARIABLES GLOBALES ---
-    // CAMBIO 1: Define la URL base de tu API en Render
     const API_BASE_URL = 'https://tiendagamer-api.onrender.com';
     const productsGrid = document.getElementById('productsGrid');
     const categoriesNav = document.getElementById('categoriesNav');
@@ -176,7 +175,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if (imagenes.length === 0) {
                 imagenesHtml = '<p>Este producto no tiene imágenes.</p>';
             } else {
-                // CAMBIO 2: Construimos la URL completa de la imagen estática usando la propiedad 'url'
                 imagenesHtml = imagenes.map(img => {
                     const imageUrl = `${API_BASE_URL}/uploads/${img.url}`;
                     return `<div class="col-6 mb-2"><img src="${imageUrl}" class="img-fluid rounded"></div>`;
@@ -225,7 +223,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }).catch(err => { alert('Error al crear categoría'); });
     }
 
-    // CAMBIO 3: Función modificada para usar FormData y manejar la subida de archivos
+    // CAMBIO: Función modificada para manejar archivo o URL
     async function handleCreateOrUpdateProduct(e) {
         e.preventDefault();
         const productId = document.getElementById('prodId').value;
@@ -238,9 +236,18 @@ document.addEventListener('DOMContentLoaded', () => {
         formData.append('categoria_id', document.getElementById('prodCategoria').value);
         formData.append('descripcion', document.getElementById('prodDescripcion').value);
 
-        const imagenInput = document.getElementById('prodImagen');
-        if (imagenInput.files.length > 0) {
-            formData.append('imagen', imagenInput.files[0]);
+        // Lógica para manejar la imagen (archivo o URL)
+        const tipoArchivo = document.getElementById('tipoArchivo').checked;
+        if (tipoArchivo) {
+            const imagenInput = document.getElementById('prodImagen');
+            if (imagenInput.files.length > 0) {
+                formData.append('imagen', imagenInput.files[0]);
+            }
+        } else {
+            const imagenUrl = document.getElementById('prodImagenUrl').value;
+            if (imagenUrl) {
+                formData.append('imagenUrl', imagenUrl);
+            }
         }
 
         const options = {
@@ -266,7 +273,24 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // CAMBIO 4: Función mejorada para depurar y asegurar que encuentra el producto
+    // CAMBIO: Nueva función para manejar el cambio de radio buttons
+    function setupImageTypeToggle() {
+        const tipoArchivoRadio = document.getElementById('tipoArchivo');
+        const tipoUrlRadio = document.getElementById('tipoUrl');
+        const campoArchivo = document.getElementById('campoArchivo');
+        const campoUrl = document.getElementById('campoUrl');
+
+        tipoArchivoRadio.addEventListener('change', () => {
+            campoArchivo.style.display = 'block';
+            campoUrl.style.display = 'none';
+        });
+
+        tipoUrlRadio.addEventListener('change', () => {
+            campoArchivo.style.display = 'none';
+            campoUrl.style.display = 'block';
+        });
+    }
+
     function openEditProductModal(id) {
         console.log('Intentando abrir el modal para el producto ID:', id);
         const product = allProducts.find(p => p.id == id);
@@ -337,4 +361,5 @@ document.addEventListener('DOMContentLoaded', () => {
     fetchCategorias();
     checkLoginStatus();
     setupEventListeners();
+    setupImageTypeToggle(); // <-- CAMBIO: Llamar a la nueva función
 });

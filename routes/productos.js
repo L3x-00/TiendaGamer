@@ -2,19 +2,17 @@
 const express = require('express');
 const db = require('../db');
 const { requireRole } = require('../middleware/auth');
-// CAMBIO 1: Importar multer y path
 const multer = require('multer');
 const path = require('path');
 
 const router = express.Router();
 
-// CAMBIO 2: Configuración de Multer para guardar imágenes
+// Configuración de Multer para guardar imágenes
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, 'uploads/'); // Asegúrate de que la carpeta 'uploads' exista en tu proyecto
+        cb(null, 'uploads/');
     },
     filename: function (req, file, cb) {
-        // Crear un nombre de archivo único para evitar sobreescrituras
         cb(null, Date.now() + '-' + Math.round(Math.random() * 1E9) + path.extname(file.originalname));
     }
 });
@@ -39,7 +37,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-// GET /productos/:id (público) - Devuelve un solo producto por su ID
+// GET /productos/:id (público)
 router.get('/:id', async (req, res) => {
   try {
     const { id } = req.params;
@@ -55,10 +53,10 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// CAMBIO 3: Modificar POST para usar multer y guardar la imagen
+// CAMBIO: Modificar POST para usar multer y guardar la imagen (archivo o URL)
 // POST /productos (admin|super) - Crea un nuevo producto
 router.post('/', requireRole('admin','super'), upload.single('imagen'), async (req, res) => {
-  const { nombre, descripcion, precio, stock, categoria_id } = req.body;
+  const { nombre, descripcion, precio, stock, categoria_id, imagenUrl } = req.body;
   try {
     const result = await db.query(
       'INSERT INTO productos (nombre, descripcion, precio, stock, categoria_id) VALUES ($1, $2, $3, $4, $5) RETURNING *', 
@@ -66,41 +64,61 @@ router.post('/', requireRole('admin','super'), upload.single('imagen'), async (r
     );
     const newProduct = result.rows[0];
 
-    // Si se subió una imagen, la guardamos en la tabla imagenes_productos
+    let finalImageUrl = null;
+
+    // 1. Si se subió un archivo, usamos su nombre
     if (req.file) {
+      finalImageUrl = req.file.filename;
+    } 
+    // 2. Si no, pero se proporcionó una URL, usamos esa
+    else if (imagenUrl) {
+      finalImageUrl = imagenUrl;
+    }
+
+    // Si tenemos una URL (de archivo o de texto), la guardamos en la BD
+    if (finalImageUrl) {
       await db.query(
         'INSERT INTO imagenes_productos (producto_id, url) VALUES ($1, $2)',
-        [newProduct.id, req.file.filename] // req.file.filename contiene el nombre del archivo guardado
+        [newProduct.id, finalImageUrl]
       );
     }
 
     res.status(201).json(newProduct);
   } catch (err) {
+    console.error("Error al crear producto:", err); // Log para depuración
     res.status(500).json({ error: err.message });
   }
 });
 
-// CAMBIO 4: Modificar PUT para usar multer y guardar la nueva imagen
+// CAMBIO: Modificar PUT para usar multer y guardar la nueva imagen (archivo o URL)
 // PUT /productos/:id (admin|super) - Actualiza un producto existente
 router.put('/:id', requireRole('admin','super'), upload.single('imagen'), async (req, res) => {
   const { id } = req.params;
-  const { nombre, descripcion, precio, stock, categoria_id } = req.body;
+  const { nombre, descripcion, precio, stock, categoria_id, imagenUrl } = req.body;
   try {
     await db.query(
       'UPDATE productos SET nombre=$1, descripcion=$2, precio=$3, stock=$4, categoria_id=$5 WHERE id=$6', 
       [nombre, descripcion, precio, stock, categoria_id, id]
     );
 
-    // Si se subió una imagen nueva, la guardamos
+    let finalImageUrl = null;
+
     if (req.file) {
+      finalImageUrl = req.file.filename;
+    } else if (imagenUrl) {
+      finalImageUrl = imagenUrl;
+    }
+
+    if (finalImageUrl) {
       await db.query(
         'INSERT INTO imagenes_productos (producto_id, url) VALUES ($1, $2)',
-        [id, req.file.filename]
+        [id, finalImageUrl]
       );
     }
 
     res.json({ id, nombre, descripcion, precio, stock, categoria_id });
   } catch (err) {
+    console.error("Error al actualizar producto:", err); // Log para depuración
     res.status(500).json({ error: err.message });
   }
 });
