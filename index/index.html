@@ -3,130 +3,124 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OfrendaManía Gamer</title>
+    <title>Walter - Curated Goods</title>
     
-    <!-- Google Fonts: Orbitron para títulos, Roboto para cuerpo -->
+    <!-- Google Fonts: Poppins para títulos, Lato para cuerpo -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
     
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 
-    <!-- --- ESTILOS PERSONALIZADOS GAMER --- -->
+    <!-- --- ESTILOS PERSONALIZADOS "WALTER" --- -->
     <style>
         :root {
-            --bg-primary: #0c0c0c;
-            --bg-secondary: #1a1a1a;
-            --bg-card: #212529;
-            --accent-color: #00d9ff;
-            --accent-hover: #00a8cc;
-            --text-primary: #ffffff;
-            --text-secondary: #adb5bd;
-            --border-color: #343a40;
+            --bg-primary: #1e1e1e;
+            --bg-secondary: #2d2d2d;
+            --bg-card: #383838;
+            --accent-color: #d4a5a5;
+            --accent-hover: #c18a8a;
+            --text-primary: #e0e0e0;
+            --text-secondary: #a0a0a0;
+            --border-color: #404040;
         }
 
         body {
             background-color: var(--bg-primary);
             color: var(--text-primary);
-            font-family: 'Roboto', sans-serif;
-            background-image: 
-                radial-gradient(circle at 10% 20%, rgba(0, 217, 255, 0.05) 0%, transparent 50%),
-                radial-gradient(circle at 90% 80%, rgba(0, 217, 255, 0.05) 0%, transparent 50%);
-            background-attachment: fixed;
+            font-family: 'Lato', sans-serif;
+            font-size: 0.95rem;
+            line-height: 1.6;
         }
 
         h1, h2, h3, h4, h5, h6 {
-            font-family: 'Orbitron', sans-serif;
-            font-weight: 700;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            color: var(--text-primary);
         }
 
         /* --- HEADER --- */
         .main-header {
             background-color: var(--bg-secondary);
-            border-bottom: 2px solid var(--accent-color);
-            padding: 1rem 0;
-            box-shadow: 0 4px 15px rgba(0, 217, 255, 0.2);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1.5rem 0;
         }
         .main-header h1 {
-            color: var(--accent-color);
-            text-shadow: 0 0 10px var(--accent-color);
-            font-weight: 900;
-            letter-spacing: 2px;
+            color: var(--text-primary);
+            font-weight: 700;
+            font-size: 2rem;
+            letter-spacing: -0.5px;
         }
         .main-header .btn {
-            font-family: 'Orbitron', sans-serif;
-            font-weight: 400;
-            border-radius: 0;
-            padding: 0.5rem 1.5rem;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+            padding: 0.6rem 1.5rem;
+            border-radius: 50px;
             transition: all 0.3s ease;
+            border: 1px solid transparent;
         }
         .main-header .btn-outline-light {
-            border-color: var(--accent-color);
-            color: var(--accent-color);
+            border-color: var(--text-secondary);
+            color: var(--text-secondary);
+            background-color: transparent;
         }
         .main-header .btn-outline-light:hover {
             background-color: var(--accent-color);
             border-color: var(--accent-color);
             color: var(--bg-primary);
-            box-shadow: 0 0 15px var(--accent-color);
         }
         .main-header .btn-danger {
-            background-color: #e74c3c;
-            border-color: #e74c3c;
+            background-color: #e57373;
+            border-color: #e57373;
         }
         .main-header .btn-danger:hover {
-            background-color: #c0392b;
-            border-color: #c0392b;
+            background-color: #ef5350;
+            border-color: #ef5350;
         }
 
         /* --- SIDEBAR --- */
         .sidebar {
             background-color: var(--bg-secondary);
             border-right: 1px solid var(--border-color);
-            min-height: calc(100vh - 86px); /* Ajustar altura */
-            padding: 1.5rem 1rem;
+            min-height: calc(100vh - 100px);
+            padding: 2rem 1.5rem;
         }
         .sidebar .sidebar-heading {
             color: var(--text-secondary);
-            font-size: 0.85rem;
-            font-family: 'Orbitron', sans-serif;
-            letter-spacing: 1px;
+            font-size: 0.8rem;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
             text-transform: uppercase;
-            padding-bottom: 0.5rem;
-            border-bottom: 1px solid var(--border-color);
-            margin-bottom: 1rem;
+            letter-spacing: 1px;
+            margin-bottom: 1.5rem;
         }
-        .sidebar .nav-link {
-            color: var(--text-secondary);
-            padding: 0.75rem 1rem;
-            border-radius: 5px;
-            transition: all 0.3s ease;
-            margin-bottom: 0.5rem;
-        }
-        .sidebar .nav-link:hover, .sidebar .nav-link.active {
+        .categoria-btn {
             background-color: var(--bg-card);
-            color: var(--accent-color);
-            text-shadow: 0 0 5px var(--accent-color);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            padding: 0.8rem 1rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-family: 'Lato', sans-serif;
+            font-weight: 400;
+            text-align: left;
+            margin-bottom: 0.75rem;
         }
-        .sidebar .admin-panel .nav-link {
-            color: #28a745;
+        .categoria-btn:hover, .categoria-btn.active {
+            background-color: var(--accent-color);
+            border-color: var(--accent-color);
+            color: var(--bg-primary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(212, 165, 165, 0.15);
         }
-        .sidebar .admin-panel .nav-link:hover {
-            color: #34ce57;
-        }
-        .categoria-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .categoria-item .categoria-link {
-            flex-grow: 1;
+        .categoria-btn i {
+            font-size: 1rem;
         }
         .delete-cat-btn {
-            color: #dc3545;
+            color: #e57373;
             opacity: 0;
             transition: opacity 0.3s ease;
         }
@@ -134,45 +128,30 @@
             opacity: 1;
         }
         .delete-cat-btn:hover {
-            color: #f8d7da;
+            color: var(--text-primary);
         }
-        /* --- ESTILOS PARA LOS BOTONES DE CATEGORÍA --- */
-        .categoria-btn {
-            background-color: var(--bg-card);
-            border: 1px solid var(--border-color);
-            color: var(--text-secondary);
-            padding: 0.75rem 1rem;
-            border-radius: 5px;
-            transition: all 0.3s ease;
-            font-family: 'Roboto', sans-serif;
-            font-weight: 400;
-            text-align: left; /* Asegura que el texto esté alineado a la izquierda */
+        .sidebar .admin-panel .nav-link {
+            color: #81c784;
+            padding: 0.8rem 1rem;
+            border-radius: 8px;
+            margin-bottom: 0.75rem;
+        }
+        .sidebar .admin-panel .nav-link:hover {
+            color: var(--text-primary);
+            background-color: #388e3c;
         }
 
-        .categoria-btn:hover, .categoria-btn.active {
-            background-color: var(--accent-color);
-            border-color: var(--accent-color);
-            color: var(--bg-primary);
-            text-shadow: none;
-            box-shadow: 0 0 10px var(--accent-color);
-            transform: scale(1.02);
-        }
-
-        .categoria-btn i {
-            font-size: 1rem;
-        }
         /* --- MAIN CONTENT --- */
         main {
-            padding: 2rem;
+            padding: 2.5rem 2rem;
         }
         #productsTitle {
             color: var(--text-primary);
-            font-family: 'Orbitron', sans-serif;
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            margin-bottom: 2rem;
-            padding-bottom: 0.5rem;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            font-size: 2.2rem;
+            margin-bottom: 2.5rem;
+            padding-bottom: 1rem;
             border-bottom: 2px solid var(--accent-color);
             display: inline-block;
         }
@@ -181,22 +160,21 @@
         .producto-card {
             background-color: var(--bg-card);
             border: 1px solid var(--border-color);
-            border-radius: 10px;
+            border-radius: 12px;
             overflow: hidden;
-            transition: all 0.3s ease;
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
             height: 100%;
             display: flex;
             flex-direction: column;
         }
         .producto-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 10px 20px rgba(0, 217, 255, 0.3);
-            border-color: var(--accent-color);
+            transform: translateY(-8px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
         }
         .producto-card .card-img-top {
-            height: 200px;
+            height: 220px;
             object-fit: cover;
-            transition: transform 0.3s ease;
+            transition: transform 0.4s ease;
         }
         .producto-card:hover .card-img-top {
             transform: scale(1.05);
@@ -204,25 +182,31 @@
         .producto-card .card-body {
             flex-grow: 1;
             padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
         }
         .producto-card .card-title {
-            color: var(--text-primary);
-            font-family: 'Orbitron', sans-serif;
             font-size: 1.1rem;
-            font-weight: 700;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
         }
         .producto-card .card-text {
             color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            flex-grow: 1;
         }
         .producto-card h4 {
             color: var(--accent-color);
-            font-family: 'Orbitron', sans-serif;
-            font-weight: 900;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            font-size: 1.3rem;
         }
         .producto-card .btn {
-            font-family: 'Roboto', sans-serif;
-            font-weight: 700;
-            border-radius: 5px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
             transition: all 0.3s ease;
         }
         .producto-card .btn-primary {
@@ -233,23 +217,25 @@
         .producto-card .btn-primary:hover {
             background-color: var(--accent-hover);
             border-color: var(--accent-hover);
-            box-shadow: 0 0 10px var(--accent-hover);
+            transform: translateY(-1px);
         }
         .producto-card .btn-outline-secondary {
-            border-color: #6c757d;
-            color: #6c757d;
+            border-color: var(--text-secondary);
+            color: var(--text-secondary);
         }
         .producto-card .btn-outline-secondary:hover {
-            background-color: #6c757d;
-            border-color: #6c757d;
+            background-color: var(--text-secondary);
+            border-color: var(--text-secondary);
+            color: var(--bg-primary);
         }
         .producto-card .btn-outline-danger {
-            border-color: #dc3545;
-            color: #dc3545;
+            border-color: #e57373;
+            color: #e57373;
         }
         .producto-card .btn-outline-danger:hover {
-            background-color: #dc3545;
-            border-color: #dc3545;
+            background-color: #e57373;
+            border-color: #e57373;
+            color: var(--bg-primary);
         }
 
         /* --- MODALS --- */
@@ -257,6 +243,7 @@
             background-color: var(--bg-secondary);
             border: 1px solid var(--border-color);
             color: var(--text-primary);
+            border-radius: 12px;
         }
         .modal-header {
             border-bottom: 1px solid var(--border-color);
@@ -265,27 +252,36 @@
             border-top: 1px solid var(--border-color);
         }
         .modal-title {
-            font-family: 'Orbitron', sans-serif;
+            font-family: 'Poppins', sans-serif;
             color: var(--accent-color);
+            font-weight: 600;
         }
         .form-control, .form-select {
             background-color: var(--bg-card);
             border: 1px solid var(--border-color);
             color: var(--text-primary);
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
         }
         .form-control:focus, .form-select:focus {
             background-color: var(--bg-card);
             border-color: var(--accent-color);
             color: var(--text-primary);
-            box-shadow: 0 0 0 0.2rem rgba(0, 217, 255, 0.25);
+            box-shadow: 0 0 0 0.2rem rgba(212, 165, 165, 0.25);
         }
         .form-label {
             color: var(--text-secondary);
-            font-weight: 300;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
         }
         .form-check-input:checked {
             background-color: var(--accent-color);
             border-color: var(--accent-color);
+        }
+        .form-check-input:focus {
+            border-color: var(--accent-color);
+            outline: 0;
+            box-shadow: 0 0 0 0.25rem rgba(212, 165, 165, 0.25);
         }
         
     </style>
@@ -296,7 +292,7 @@
     <header class="main-header">
         <div class="container">
             <div class="d-flex justify-content-between align-items-center">
-                <h1 class="h3 mb-0">OFRENDA MANÍA GAMER</h1>
+                <h1 class="mb-0">Walter</h1>
                 <div>
                     <button id="btnLogin" class="btn btn-outline-light">Iniciar Sesión</button>
                     <button id="btnLogout" class="btn btn-danger d-none">Cerrar Sesión</button>
@@ -398,29 +394,11 @@
                             <textarea class="form-control" id="prodDescripcion" rows="3"></textarea>
                         </div>
                         
-                        <!-- Campo para imagen con opción de archivo o URL -->
+                        <!-- Campo para imagen, ahora solo URL -->
                         <div class="mb-3">
-                            <label class="form-label">Imagen del Producto</label>
-                            
-                            <div class="form-check mb-2">
-                                <input class="form-check-input" type="radio" name="imagenTipo" id="tipoArchivo" value="archivo" checked>
-                                <label class="form-check-label" for="tipoArchivo">
-                                    Subir Archivo
-                                </label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="imagenTipo" id="tipoUrl" value="url">
-                                <label class="form-check-label" for="tipoUrl">
-                                    Pegar URL de Imagen
-                                </label>
-                            </div>
-
-                            <div id="campoArchivo" class="mt-2">
-                                <input class="form-control" type="file" id="prodImagen" accept="image/*">
-                            </div>
-                            <div id="campoUrl" class="mt-2" style="display: none;">
-                                <input type="url" class="form-control" id="prodImagenUrl" placeholder="https://ejemplo.com/imagen.jpg">
-                            </div>
+                            <label for="prodImagenUrl" class="form-label">URL de la Imagen del Producto</label>
+                            <input type="url" class="form-control" id="prodImagenUrl" placeholder="https://ejemplo.com/imagen.jpg" required>
+                            <div class="form-text">Pega la URL directa de una imagen de internet.</div>
                         </div>
                     </div>
                     <div class="modal-footer">
