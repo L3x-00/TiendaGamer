@@ -147,7 +147,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const role = localStorage.getItem('role');
         const isAdmin = role === 'admin' || role === 'super';
 
-        // Botón "Todos" ahora es un botón real
         categoriesNav.innerHTML = `
             <button class="btn categoria-btn active w-100 text-start mb-2" data-id="all">
                 <i class="bi bi-grid-3x3-gap me-2"></i>Todos
@@ -160,7 +159,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 deleteButton = `<button class="btn btn-sm btn-outline-danger delete-cat-btn" data-id="${categoria.id}" title="Eliminar Categoría"><i class="bi bi-trash"></i></button>`;
             }
             
-            // Cada categoría es ahora un botón
             const categoryButton = `
                 <button class="btn categoria-btn w-100 text-start mb-2 d-flex justify-content-between align-items-center" data-id="${categoria.id}">
                     <span>${categoria.nombre}</span>
@@ -170,19 +168,11 @@ document.addEventListener('DOMContentLoaded', () => {
             categoriesNav.innerHTML += categoryButton;
         });
 
-        // Listener para los botones de categoría
         document.querySelectorAll('.categoria-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
-                // Evitar que se dispare si se hace click en el botón de eliminar dentro
-                if (e.target.closest('.delete-cat-btn')) {
-                    return;
-                }
-
-                // Quitar clase active de todos los botones
+                if (e.target.closest('.delete-cat-btn')) return;
                 document.querySelectorAll('.categoria-btn').forEach(b => b.classList.remove('active'));
-                // Añadir clase active al botón clickeado
                 btn.classList.add('active');
-
                 const categoriaId = btn.dataset.id;
                 const categoriaNombre = btn.querySelector('span').textContent.trim();
                 
@@ -196,7 +186,6 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
 
-        // Listener para los botones de eliminar categoría (sin cambios)
         document.querySelectorAll('.delete-cat-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.stopPropagation();
@@ -264,25 +253,24 @@ document.addEventListener('DOMContentLoaded', () => {
         }).catch(err => { alert('Error al crear categoría'); });
     }
 
-    // --- CORRECCIÓN: Función simplificada para SOLO URL ---
+    // --- FUNCIÓN CORREGIDA Y SIMPLIFICADA ---
     async function handleCreateOrUpdateProduct(e) {
         e.preventDefault();
         const productId = document.getElementById('prodId').value;
         const isEditing = !!productId;
 
-        // Ahora usamos un objeto simple en lugar de FormData
         const productData = { 
             nombre: document.getElementById('prodNombre').value, 
             precio: parseFloat(document.getElementById('prodPrecio').value), 
             stock: parseInt(document.getElementById('prodStock').value), 
             categoria_id: document.getElementById('prodCategoria').value ? parseInt(document.getElementById('prodCategoria').value) : null, 
             descripcion: document.getElementById('prodDescripcion').value,
-            imagenUrl: document.getElementById('prodImagenUrl').value // <-- Solo leemos la URL
+            imagenUrl: document.getElementById('prodImagenUrl').value 
         };
 
         const options = {
             method: isEditing ? 'PUT' : 'POST',
-            headers: { 'Content-Type': 'application/json' }, // Volvemos a enviar JSON
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(productData)
         };
 
@@ -305,14 +293,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function openEditProductModal(id) {
-        console.log('Intentando abrir el modal para el producto ID:', id);
         const product = allProducts.find(p => p.id == id);
         if (!product) {
-            console.error('Producto no encontrado en allProducts para el ID:', id);
             alert('Error: No se encontraron los datos del producto para editar.');
             return;
         }
-        console.log('Producto encontrado:', product);
 
         document.getElementById('productModalTitle').textContent = 'Editar Producto';
         document.getElementById('prodId').value = product.id;
@@ -321,7 +306,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('prodStock').value = product.stock;
         document.getElementById('prodCategoria').value = product.categoria_id;
         document.getElementById('prodDescripcion').value = product.descripcion;
-        // No hay campo de imagen para rellenar en la edición con este diseño
+        document.getElementById('prodImagenUrl').value = product.firstimageurl || ''; // Cargar la URL existente
         const productModal = new bootstrap.Modal(document.getElementById('productModal'));
         productModal.show();
     }
@@ -340,12 +325,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         try {
             await apiFetch(`categorias/${id}`, { method: 'DELETE' });
-            // Recargar categorías y productos para actualizar la UI
             fetchCategorias();
             fetchProductos();
         } catch (err) {
             console.error("Error al eliminar la categoría:", err);
-            alert("Error al eliminar la categoría. Es posible que tenga productos asociados. Revisa la consola para más detalles.");
+            alert("Error al eliminar la categoría. Es posible que tenga productos asociados.");
         }
     }
 
@@ -369,11 +353,6 @@ document.addEventListener('DOMContentLoaded', () => {
     function setupEventListeners() {
         if (btnLogin) {
             btnLogin.addEventListener('click', () => {
-                if (typeof bootstrap === 'undefined' || typeof bootstrap.Modal === 'undefined') {
-                    console.error("Error: Bootstrap o su componente Modal no está cargado.");
-                    alert("Error: La interfaz no se ha cargado correctamente. Por favor, recarga la página.");
-                    return;
-                }
                 const modalElement = document.getElementById('loginModal');
                 const modal = bootstrap.Modal.getOrCreateInstance(modalElement);
                 modal.show();
