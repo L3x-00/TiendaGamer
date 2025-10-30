@@ -2,6 +2,7 @@
 
 document.addEventListener('DOMContentLoaded', () => {
     // --- VARIABLES GLOBALES ---
+    // CAMBIO 1: Define la URL base de tu API en Render
     const API_BASE_URL = 'https://tiendagamer-api.onrender.com';
     const productsGrid = document.getElementById('productsGrid');
     const categoriesNav = document.getElementById('categoriesNav');
@@ -143,55 +144,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderMenuCategorias(categorias) {
         if (!categorias || categorias.length === 0) return;
-        
-        const role = localStorage.getItem('role');
-        const isAdmin = role === 'admin' || role === 'super';
-
-        categoriesNav.innerHTML = `
-            <button class="btn categoria-btn active w-100 text-start mb-2" data-id="all">
-                <i class="bi bi-grid-3x3-gap me-2"></i>Todos
-            </button>
-        `;
-        
+        categoriesNav.innerHTML = '<a href="#" class="list-group-item list-group-item-action active" data-id="all">Todos</a>';
         categorias.forEach(categoria => {
-            let deleteButton = '';
-            if (isAdmin) {
-                deleteButton = `<button class="btn btn-sm btn-outline-danger delete-cat-btn" data-id="${categoria.id}" title="Eliminar Categoría"><i class="bi bi-trash"></i></button>`;
-            }
-            
-            const categoryButton = `
-                <button class="btn categoria-btn w-100 text-start mb-2 d-flex justify-content-between align-items-center" data-id="${categoria.id}">
-                    <span>${categoria.nombre}</span>
-                    ${deleteButton}
-                </button>
-            `;
-            categoriesNav.innerHTML += categoryButton;
+            categoriesNav.innerHTML += `<a href="#" class="list-group-item list-group-item-action categoria-link" data-id="${categoria.id}">${categoria.nombre}</a>`;
         });
-
-        document.querySelectorAll('.categoria-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                if (e.target.closest('.delete-cat-btn')) return;
-                document.querySelectorAll('.categoria-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                const categoriaId = btn.dataset.id;
-                const categoriaNombre = btn.querySelector('span').textContent.trim();
-                
-                if (categoriaId === 'all') {
-                    productsTitle.textContent = 'Todos los Productos';
-                    renderProductos(allProducts);
-                } else {
-                    productsTitle.textContent = `Productos de: ${categoriaNombre}`;
-                    fetchProductosPorCategoria(categoriaId);
-                }
+        document.querySelectorAll('.categoria-link').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const categoriaId = e.target.dataset.id;
+                const categoriaNombre = e.target.textContent;
+                productsTitle.textContent = `Productos de: ${categoriaNombre}`;
+                fetchProductosPorCategoria(categoriaId);
             });
         });
-
-        document.querySelectorAll('.delete-cat-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                const categoriaId = e.target.closest('.delete-cat-btn').dataset.id;
-                deleteCategory(categoriaId);
-            });
+        categoriesNav.querySelector('a[data-id="all"]').addEventListener('click', (e) => {
+            e.preventDefault();
+            categoriesNav.querySelector('.active').classList.remove('active');
+            e.target.classList.add('active');
+            productsTitle.textContent = 'Todos los productos';
+            renderProductos(allProducts);
         });
     }
 
@@ -205,15 +176,16 @@ document.addEventListener('DOMContentLoaded', () => {
             if (imagenes.length === 0) {
                 imagenesHtml = '<p>Este producto no tiene imágenes.</p>';
             } else {
+                // CAMBIO 2: Construimos la URL completa de la imagen estática usando la propiedad 'url'
                 imagenesHtml = imagenes.map(img => {
                     const imageUrl = `${API_BASE_URL}/uploads/${img.url}`;
-                    return `<div class="col-6 mb-2"><img src="${imageUrl}" class="img-fluid rounded" onerror="this.onerror=null; this.src='https://via.placeholder.com/300x200.png?text=Error+al+Cargar';"></div>`;
+                    return `<div class="col-6 mb-2"><img src="${imageUrl}" class="img-fluid rounded"></div>`;
                 }).join('');
             }
             detalleImagenes.innerHTML = imagenesHtml;
         }).catch(err => {
             console.error('Error cargando imágenes:', err);
-            detalleImagenes.innerHTML = `<p class="text-danger">No se pudieron cargar las imágenes. Error: ${err.message}</p>`;
+            detalleImagenes.innerHTML = '<p class="text-danger">No se pudieron cargar las imágenes.</p>';
         });
 
         detalleInfo.innerHTML = `
@@ -253,25 +225,27 @@ document.addEventListener('DOMContentLoaded', () => {
         }).catch(err => { alert('Error al crear categoría'); });
     }
 
-    // --- FUNCIÓN CORREGIDA Y SIMPLIFICADA ---
+    // CAMBIO 3: Función modificada para usar FormData y manejar la subida de archivos
     async function handleCreateOrUpdateProduct(e) {
         e.preventDefault();
         const productId = document.getElementById('prodId').value;
         const isEditing = !!productId;
 
-        const productData = { 
-            nombre: document.getElementById('prodNombre').value, 
-            precio: parseFloat(document.getElementById('prodPrecio').value), 
-            stock: parseInt(document.getElementById('prodStock').value), 
-            categoria_id: document.getElementById('prodCategoria').value ? parseInt(document.getElementById('prodCategoria').value) : null, 
-            descripcion: document.getElementById('prodDescripcion').value,
-            imagenUrl: document.getElementById('prodImagenUrl').value 
-        };
+        const formData = new FormData();
+        formData.append('nombre', document.getElementById('prodNombre').value);
+        formData.append('precio', document.getElementById('prodPrecio').value);
+        formData.append('stock', document.getElementById('prodStock').value);
+        formData.append('categoria_id', document.getElementById('prodCategoria').value);
+        formData.append('descripcion', document.getElementById('prodDescripcion').value);
+
+        const imagenInput = document.getElementById('prodImagen');
+        if (imagenInput.files.length > 0) {
+            formData.append('imagen', imagenInput.files[0]);
+        }
 
         const options = {
             method: isEditing ? 'PUT' : 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(productData)
+            body: formData
         };
 
         try {
@@ -292,12 +266,16 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // CAMBIO 4: Función mejorada para depurar y asegurar que encuentra el producto
     function openEditProductModal(id) {
+        console.log('Intentando abrir el modal para el producto ID:', id);
         const product = allProducts.find(p => p.id == id);
         if (!product) {
+            console.error('Producto no encontrado en allProducts para el ID:', id);
             alert('Error: No se encontraron los datos del producto para editar.');
             return;
         }
+        console.log('Producto encontrado:', product);
 
         document.getElementById('productModalTitle').textContent = 'Editar Producto';
         document.getElementById('prodId').value = product.id;
@@ -306,7 +284,6 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('prodStock').value = product.stock;
         document.getElementById('prodCategoria').value = product.categoria_id;
         document.getElementById('prodDescripcion').value = product.descripcion;
-        document.getElementById('prodImagenUrl').value = product.firstimageurl || ''; // Cargar la URL existente
         const productModal = new bootstrap.Modal(document.getElementById('productModal'));
         productModal.show();
     }
@@ -317,20 +294,6 @@ document.addEventListener('DOMContentLoaded', () => {
             await apiFetch(`productos/${id}`, { method: 'DELETE' });
             fetchProductos();
         } catch (err) { alert("Error al eliminar el producto"); }
-    }
-
-    async function deleteCategory(id) {
-        if (!confirm("¿Estás seguro de que quieres eliminar esta categoría? Si hay productos asociados, la eliminación fallará.")) {
-            return;
-        }
-        try {
-            await apiFetch(`categorias/${id}`, { method: 'DELETE' });
-            fetchCategorias();
-            fetchProductos();
-        } catch (err) {
-            console.error("Error al eliminar la categoría:", err);
-            alert("Error al eliminar la categoría. Es posible que tenga productos asociados.");
-        }
     }
 
     function checkLoginStatus() {
@@ -353,6 +316,11 @@ document.addEventListener('DOMContentLoaded', () => {
     function setupEventListeners() {
         if (btnLogin) {
             btnLogin.addEventListener('click', () => {
+                if (typeof bootstrap === 'undefined' || typeof bootstrap.Modal === 'undefined') {
+                    console.error("Error: Bootstrap o su componente Modal no está cargado.");
+                    alert("Error: La interfaz no se ha cargado correctamente. Por favor, recarga la página.");
+                    return;
+                }
                 const modalElement = document.getElementById('loginModal');
                 const modal = bootstrap.Modal.getOrCreateInstance(modalElement);
                 modal.show();
