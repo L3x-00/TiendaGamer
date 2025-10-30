@@ -48,14 +48,14 @@ app.use((req, res, next) => {
         '38.252.152.204'
     ]; 
     
-    console.log(`[PROD] VALIDANDO IP IP: ${clientIP}`);
+    console.log(`VALIDACION DE LA IP: ${clientIP}`);
     
     if (allowedIPs.includes(clientIP)) {
-        console.log(`IP PERMITIDO PARA EL ACCESO: ${clientIP}`);
+        console.log(`IP PERMITIDO PARA EL INGERSO: ${clientIP}`);
         next(); // La IP es permitida, continuamos
     } else {
-        console.log(`ID DENEGADO PARA EL ACCESO: ${clientIP}`);
-        res.status(403).json({ message: 'ACCESO DENEGADO PARA EL IP' });
+        console.log(`IP DENEGADO PARA EL ACCESSO --HACKER DETECTADO--: ${clientIP}`);
+        res.status(403).json({ message: 'ACCESO DENEGADO ' });
     }
 });
 

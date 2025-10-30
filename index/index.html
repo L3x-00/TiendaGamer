@@ -3,176 +3,224 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OfrendaManía Gamer</title>
+    <title>Walter Shop</title>
     
-    <!-- Google Fonts: Orbitron para títulos, Roboto para cuerpo -->
+    <!-- Google Fonts: Poppins para títulos, Inter para cuerpo -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 
-    <!-- --- ESTILOS PERSONALIZADOS GAMER --- -->
+    <!-- --- ESTILOS PERSONALIZADOS "WALTER SHOP" --- -->
     <style>
         :root {
-            --bg-primary: #0c0c0c;
-            --bg-secondary: #1a1a1a;
-            --bg-card: #212529;
-            --accent-color: #00d9ff;
-            --accent-hover: #00a8cc;
-            --text-primary: #ffffff;
-            --text-secondary: #adb5bd;
-            --border-color: #343a40;
+            --bg-primary: #f8f9fa;
+            --bg-secondary: #ffffff;
+            --bg-sidebar: #e9ecef;
+            --bg-card: #ffffff;
+            --accent-color: #6c8ebf;
+            --accent-hover: #5a7b9a;
+            --text-primary: #343a40;
+            --text-secondary: #6c757d;
+            --border-color: #dee2e6;
+            --shadow-sm: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+            --shadow-md: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
         }
 
         body {
             background-color: var(--bg-primary);
             color: var(--text-primary);
-            font-family: 'Roboto', sans-serif;
-            background-image: 
-                radial-gradient(circle at 10% 20%, rgba(0, 217, 255, 0.05) 0%, transparent 50%),
-                radial-gradient(circle at 90% 80%, rgba(0, 217, 255, 0.05) 0%, transparent 50%);
-            background-attachment: fixed;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+            line-height: 1.6;
         }
 
         h1, h2, h3, h4, h5, h6 {
-            font-family: 'Orbitron', sans-serif;
-            font-weight: 700;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            color: var(--text-primary);
         }
 
         /* --- HEADER --- */
         .main-header {
             background-color: var(--bg-secondary);
-            border-bottom: 2px solid var(--accent-color);
-            padding: 1rem 0;
-            box-shadow: 0 4px 15px rgba(0, 217, 255, 0.2);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1.5rem 0;
+            box-shadow: var(--shadow-sm);
         }
         .main-header h1 {
-            color: var(--accent-color);
-            text-shadow: 0 0 10px var(--accent-color);
-            font-weight: 900;
-            letter-spacing: 2px;
+            color: var(--text-primary);
+            font-weight: 700;
+            font-size: 1.8rem;
+            letter-spacing: -0.5px;
         }
         .main-header .btn {
-            font-family: 'Orbitron', sans-serif;
-            font-weight: 400;
-            border-radius: 0;
-            padding: 0.5rem 1.5rem;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+            padding: 0.6rem 1.5rem;
+            border-radius: 50px;
             transition: all 0.3s ease;
+            border: 1px solid transparent;
         }
         .main-header .btn-outline-light {
             border-color: var(--accent-color);
             color: var(--accent-color);
+            background-color: transparent;
         }
         .main-header .btn-outline-light:hover {
             background-color: var(--accent-color);
             border-color: var(--accent-color);
-            color: var(--bg-primary);
-            box-shadow: 0 0 15px var(--accent-color);
+            color: var(--bg-secondary);
         }
         .main-header .btn-danger {
-            background-color: #e74c3c;
-            border-color: #e74c3c;
+            background-color: #f35c5c;
+            border-color: #f35c5c;
         }
         .main-header .btn-danger:hover {
-            background-color: #c0392b;
-            border-color: #c0392b;
+            background-color: #ef5350;
+            border-color: #ef5350;
         }
 
-        /* --- SIDEBAR --- */
+        /* --- LAYOUT PRINCIPAL (CONTENIDO A LA IZQ, SIDEBAR A LA DER) --- */
+        .main-layout {
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .main-layout > main {
+            flex: 0 0 auto;
+            width: 100%;
+        }
+        @media (min-width: 768px) {
+            .main-layout > main {
+                flex: 0 0 calc(100% - 280px); /* Deja espacio para el sidebar */
+                max-width: calc(100% - 280px);
+            }
+        }
+        .main-layout > nav {
+            flex: 0 0 auto;
+            width: 100%;
+        }
+        @media (min-width: 768px) {
+            .main-layout > nav {
+                flex: 0 0 280px; /* Ancho fijo para el sidebar */
+                max-width: 280px;
+            }
+        }
+
+        /* --- SIDEBAR (AHORA A LA DERECHA) --- */
         .sidebar {
-            background-color: var(--bg-secondary);
-            border-right: 1px solid var(--border-color);
-            min-height: calc(100vh - 86px); /* Ajustar altura */
-            padding: 1.5rem 1rem;
+            background-color: var(--bg-sidebar);
+            border-left: 1px solid var(--border-color);
+            min-height: calc(100vh - 100px);
+            padding: 2rem 1.5rem;
         }
         .sidebar .sidebar-heading {
             color: var(--text-secondary);
-            font-size: 0.85rem;
-            font-family: 'Orbitron', sans-serif;
-            letter-spacing: 1px;
+            font-size: 0.8rem;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
             text-transform: uppercase;
-            padding-bottom: 0.5rem;
-            border-bottom: 1px solid var(--border-color);
-            margin-bottom: 1rem;
+            letter-spacing: 1px;
+            margin-bottom: 1.5rem;
         }
         .sidebar .nav-link {
             color: var(--text-secondary);
-            padding: 0.75rem 1rem;
-            border-radius: 5px;
+            padding: 0.8rem 1rem;
+            border-radius: 8px;
             transition: all 0.3s ease;
-            margin-bottom: 0.5rem;
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+            margin-bottom: 0.75rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
         .sidebar .nav-link:hover, .sidebar .nav-link.active {
-            background-color: var(--bg-card);
             color: var(--accent-color);
-            text-shadow: 0 0 5px var(--accent-color);
+            background-color: rgba(108, 142, 191, 0.1);
+        }
+        .sidebar .nav-link.active {
+            font-weight: 600;
+        }
+        .sidebar .nav-link.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 3px;
+            height: 70%;
+            background-color: var(--accent-color);
+            border-radius: 2px;
+        }
+        .delete-cat-btn {
+            color: #f35c5c;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .sidebar .nav-link:hover .delete-cat-btn {
+            opacity: 1;
+        }
+        .delete-cat-btn:hover {
+            color: #e74c3c;
         }
         .sidebar .admin-panel .nav-link {
             color: #28a745;
         }
         .sidebar .admin-panel .nav-link:hover {
-            color: #34ce57;
-        }
-        .categoria-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .categoria-item .categoria-link {
-            flex-grow: 1;
-        }
-        .delete-cat-btn {
-            color: #dc3545;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-        .categoria-item:hover .delete-cat-btn {
-            opacity: 1;
-        }
-        .delete-cat-btn:hover {
-            color: #f8d7da;
+            color: var(--text-primary);
+            background-color: rgba(40, 167, 69, 0.1);
         }
 
         /* --- MAIN CONTENT --- */
         main {
-            padding: 2rem;
+            padding: 2.5rem 2rem;
         }
         #productsTitle {
             color: var(--text-primary);
-            font-family: 'Orbitron', sans-serif;
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            margin-bottom: 2rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 2px solid var(--accent-color);
-            display: inline-block;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            font-size: 2.2rem;
+            margin-bottom: 2.5rem;
+            position: relative;
+            padding-bottom: 1rem;
+        }
+        #productsTitle::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 50px;
+            height: 4px;
+            background-color: var(--accent-color);
+            border-radius: 2px;
         }
 
         /* --- PRODUCT CARDS --- */
         .producto-card {
             background-color: var(--bg-card);
             border: 1px solid var(--border-color);
-            border-radius: 10px;
+            border-radius: 16px;
             overflow: hidden;
-            transition: all 0.3s ease;
+            transition: all 0.4s ease;
             height: 100%;
             display: flex;
             flex-direction: column;
+            box-shadow: var(--shadow-sm);
         }
         .producto-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 10px 20px rgba(0, 217, 255, 0.3);
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-md);
             border-color: var(--accent-color);
         }
         .producto-card .card-img-top {
-            height: 200px;
+            height: 220px;
             object-fit: cover;
-            transition: transform 0.3s ease;
+            transition: transform 0.4s ease;
         }
         .producto-card:hover .card-img-top {
             transform: scale(1.05);
@@ -180,88 +228,110 @@
         .producto-card .card-body {
             flex-grow: 1;
             padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
         }
         .producto-card .card-title {
-            color: var(--text-primary);
-            font-family: 'Orbitron', sans-serif;
             font-size: 1.1rem;
-            font-weight: 700;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
         }
         .producto-card .card-text {
             color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            flex-grow: 1;
         }
         .producto-card h4 {
             color: var(--accent-color);
-            font-family: 'Orbitron', sans-serif;
-            font-weight: 900;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            font-size: 1.3rem;
         }
         .producto-card .btn {
-            font-family: 'Roboto', sans-serif;
-            font-weight: 700;
-            border-radius: 5px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
             transition: all 0.3s ease;
         }
         .producto-card .btn-primary {
             background-color: var(--accent-color);
             border-color: var(--accent-color);
-            color: var(--bg-primary);
+            color: var(--bg-secondary);
         }
         .producto-card .btn-primary:hover {
             background-color: var(--accent-hover);
             border-color: var(--accent-hover);
-            box-shadow: 0 0 10px var(--accent-hover);
+            transform: translateY(-1px);
         }
         .producto-card .btn-outline-secondary {
-            border-color: #6c757d;
-            color: #6c757d;
+            border-color: var(--border-color);
+            color: var(--text-secondary);
         }
         .producto-card .btn-outline-secondary:hover {
-            background-color: #6c757d;
-            border-color: #6c757d;
+            background-color: var(--text-secondary);
+            border-color: var(--text-secondary);
+            color: var(--bg-secondary);
         }
         .producto-card .btn-outline-danger {
-            border-color: #dc3545;
-            color: #dc3545;
+            border-color: #f35c5c;
+            color: #f35c5c;
         }
         .producto-card .btn-outline-danger:hover {
-            background-color: #dc3545;
-            border-color: #dc3545;
+            background-color: #f35c5c;
+            border-color: #f35c5c;
+            color: var(--bg-secondary);
         }
 
         /* --- MODALS --- */
         .modal-content {
             background-color: var(--bg-secondary);
-            border: 1px solid var(--border-color);
+            border: none;
             color: var(--text-primary);
+            border-radius: 16px;
+            box-shadow: var(--shadow-md);
         }
         .modal-header {
             border-bottom: 1px solid var(--border-color);
+            padding: 1.5rem;
         }
         .modal-footer {
             border-top: 1px solid var(--border-color);
+            padding: 1.5rem;
         }
         .modal-title {
-            font-family: 'Orbitron', sans-serif;
-            color: var(--accent-color);
+            font-family: 'Poppins', sans-serif;
+            color: var(--text-primary);
+            font-weight: 700;
         }
         .form-control, .form-select {
-            background-color: var(--bg-card);
+            background-color: var(--bg-primary);
             border: 1px solid var(--border-color);
             color: var(--text-primary);
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            transition: all 0.3s ease;
         }
         .form-control:focus, .form-select:focus {
-            background-color: var(--bg-card);
+            background-color: var(--bg-primary);
             border-color: var(--accent-color);
             color: var(--text-primary);
-            box-shadow: 0 0 0 0.2rem rgba(0, 217, 255, 0.25);
+            box-shadow: 0 0 0 0.2rem rgba(108, 142, 191, 0.25);
         }
         .form-label {
-            color: var(--text-secondary);
-            font-weight: 300;
+            color: var(--text-primary);
+            font-weight: 500;
+            margin-bottom: 0.5rem;
         }
         .form-check-input:checked {
             background-color: var(--accent-color);
             border-color: var(--accent-color);
+        }
+        .form-check-input:focus {
+            border-color: var(--accent-color);
+            outline: 0;
+            box-shadow: 0 0 0 0.25rem rgba(108, 142, 191, 0.25);
         }
         
     </style>
@@ -272,9 +342,9 @@
     <header class="main-header">
         <div class="container">
             <div class="d-flex justify-content-between align-items-center">
-                <h1 class="h3 mb-0">OFRENDA MANÍA GAMER</h1>
+                <h1 class="mb-0">Walter Shop</h1>
                 <div>
-                    <button id="btnLogin" class="btn btn-outline-light">Iniciar Sesión</button>
+                    <button id="btnLogin" class="btn btn-outline-light">Login</button>
                     <button id="btnLogout" class="btn btn-danger d-none">Cerrar Sesión</button>
                 </div>
             </div>
@@ -282,9 +352,18 @@
     </header>
 
     <div class="container-fluid">
-        <div class="row">
-            <!-- --- SIDEBAR --- -->
-            <nav class="col-md-3 col-lg-2 d-md-block sidebar">
+        <!-- --- CAMBIO DE ESTRUCTURA: main primero, nav después --- -->
+        <div class="main-layout">
+            <!-- --- CONTENIDO PRINCIPAL (IZQUIERDA) --- -->
+            <main class="px-md-4">
+                <h2 id="productsTitle">Todos los Productos</h2>
+                <div class="row" id="productsGrid">
+                    <!-- Los productos se cargarán aquí con JS -->
+                </div>
+            </main>
+
+            <!-- --- SIDEBAR (DERECHA) --- -->
+            <nav class="sidebar d-md-block">
                 <div class="position-sticky">
                     <h6 class="sidebar-heading">Categorías</h6>
                     <div id="categoriesNav">
@@ -305,14 +384,6 @@
                     </div>
                 </div>
             </nav>
-
-            <!-- --- CONTENIDO PRINCIPAL --- -->
-            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-                <h2 id="productsTitle">Todos los Productos</h2>
-                <div class="row" id="productsGrid">
-                    <!-- Los productos se cargarán aquí con JS -->
-                </div>
-            </main>
         </div>
     </div>
 
@@ -344,11 +415,11 @@
     <div class="modal fade" id="productModal" tabindex="-1" aria-labelledby="productModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="productModalTitle">Nuevo Producto</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
                 <form id="formProducto">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="productModalTitle">Nuevo Producto</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
                     <div class="modal-body">
                         <input type="hidden" id="prodId">
                         <div class="mb-3">
@@ -412,11 +483,11 @@
     <div class="modal fade" id="categoriaModal" tabindex="-1" aria-labelledby="categoriaModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="categoriaModalLabel">Nueva Categoría</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
                 <form id="formCategoria">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="categoriaModalLabel">Nueva Categoría</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
                     <div class="modal-body">
                         <div class="mb-3">
                             <label for="catNombre" class="form-label">Nombre de la Categoría</label>
@@ -436,11 +507,11 @@
     <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="loginModalLabel">Iniciar Sesión</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
                 <form id="formLogin">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="loginModalLabel">Iniciar Sesión</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
                     <div class="modal-body">
                         <div id="loginMsg" class="mb-2 text-center"></div>
                         <div class="mb-3">
