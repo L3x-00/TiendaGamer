@@ -48,14 +48,14 @@ app.use((req, res, next) => {
         '38.252.152.204'
     ]; 
     
-    console.log(`[PROD] Modo Producción. Verificando IP: ${clientIP}`);
+    console.log(`[PROD] VALIDANDO IP IP: ${clientIP}`);
     
     if (allowedIPs.includes(clientIP)) {
-        console.log(`[PROD] ACCESO PERMITIDO para la IP: ${clientIP}`);
+        console.log(`IP PERMITIDO PARA EL ACCESO: ${clientIP}`);
         next(); // La IP es permitida, continuamos
     } else {
-        console.log(`[PROD] ACCESO DENEGADO para la IP: ${clientIP}`);
-        res.status(403).json({ message: 'Acceso denegado: IP no permitida' });
+        console.log(`ID DENEGADO PARA EL ACCESO: ${clientIP}`);
+        res.status(403).json({ message: 'ACCESO DENEGADO PARA EL IP' });
     }
 });
 

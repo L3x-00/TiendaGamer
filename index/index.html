@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aura - Modern Essentials</title>
+    <title>TIENDA DE WALTER</title>
     
     <!-- Google Fonts: Montserrat para títulos, Open Sans para cuerpo -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -158,17 +158,20 @@
         .categoria-btn.active::before, .categoria-btn:hover::before {
             height: 70%;
         }
+        
+        /* --- CORRECCIÓN: Selector CSS para el botón de eliminar --- */
+        .categoria-btn:hover .delete-cat-btn {
+            opacity: 1;
+        }
         .delete-cat-btn {
             color: #f35c5c;
             opacity: 0;
             transition: opacity 0.3s ease;
         }
-        .categoria-item:hover .delete-cat-btn {
-            opacity: 1;
-        }
         .delete-cat-btn:hover {
             color: #e74c3c;
         }
+
         .sidebar .admin-panel .nav-link {
             color: var(--text-secondary);
             padding: 0.8rem 1rem;
@@ -349,7 +352,7 @@
             <div class="d-flex justify-content-between align-items-center">
                 <h1 class="mb-0">Aura</h1>
                 <div>
-                    <button id="btnLogin" class="btn btn-outline-light">Iniciar Sesión</button>
+                    <button id="btnLogin" class="btn btn-outline-light">Login</button>
                     <button id="btnLogout" class="btn btn-danger d-none">Cerrar Sesión</button>
                 </div>
             </div>
@@ -377,7 +380,7 @@
                     
                     <!-- Panel de Administración -->
                     <div class="admin-panel mt-4" style="display: none;">
-                        <h6 class="sidebar-heading">Administración</h6>
+                        <h6 class="sidebar-heading">MODO ADMINISTRACION</h6>
                         <ul class="nav flex-column">
                             <li class="nav-item">
                                 <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#productModal"><i class="bi bi-plus-circle me-2"></i>Nuevo Producto</a>
@@ -417,14 +420,15 @@
     </div>
 
     <!-- --- MODAL PARA CREAR/EDITAR PRODUCTO --- -->
+    <!-- --- CORRECCIÓN: Mover modal-footer DENTRO del form --- -->
     <div class="modal fade" id="productModal" tabindex="-1" aria-labelledby="productModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="productModalTitle">Nuevo Producto</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
                 <form id="formProducto">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="productModalTitle">Producto nuevo</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
                     <div class="modal-body">
                         <input type="hidden" id="prodId">
                         <div class="mb-3">
@@ -467,14 +471,15 @@
     </div>
 
     <!-- --- MODAL PARA CREAR CATEGORÍA --- -->
+    <!-- --- CORRECCIÓN: Mover modal-footer DENTRO del form --- -->
     <div class="modal fade" id="categoriaModal" tabindex="-1" aria-labelledby="categoriaModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="categoriaModalLabel">Nueva Categoría</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
                 <form id="formCategoria">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="categoriaModalLabel">Nueva Categoría</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
                     <div class="modal-body">
                         <div class="mb-3">
                             <label for="catNombre" class="form-label">Nombre de la Categoría</label>
@@ -491,14 +496,15 @@
     </div>
 
     <!-- --- MODAL DE LOGIN --- -->
+    <!-- --- CORRECCIÓN: Mover modal-footer DENTRO del form --- -->
     <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="loginModalLabel">Iniciar Sesión</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
                 <form id="formLogin">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="loginModalLabel">Iniciar Sesión</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
                     <div class="modal-body">
                         <div id="loginMsg" class="mb-2 text-center"></div>
                         <div class="mb-3">
