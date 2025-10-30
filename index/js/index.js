@@ -141,7 +141,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // CAMBIO: Modificar renderMenuCategorias para que genere botones
     function renderMenuCategorias(categorias) {
         if (!categorias || categorias.length === 0) return;
         
@@ -219,13 +218,13 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 imagenesHtml = imagenes.map(img => {
                     const imageUrl = `${API_BASE_URL}/uploads/${img.url}`;
-                    return `<div class="col-6 mb-2"><img src="${imageUrl}" class="img-fluid rounded"></div>`;
+                    return `<div class="col-6 mb-2"><img src="${imageUrl}" class="img-fluid rounded" onerror="this.onerror=null; this.src='https://via.placeholder.com/300x200.png?text=Error+al+Cargar';"></div>`;
                 }).join('');
             }
             detalleImagenes.innerHTML = imagenesHtml;
         }).catch(err => {
             console.error('Error cargando imágenes:', err);
-            detalleImagenes.innerHTML = '<p class="text-danger">No se pudieron cargar las imágenes.</p>';
+            detalleImagenes.innerHTML = `<p class="text-danger">No se pudieron cargar las imágenes. Error: ${err.message}</p>`;
         });
 
         detalleInfo.innerHTML = `
@@ -265,34 +264,26 @@ document.addEventListener('DOMContentLoaded', () => {
         }).catch(err => { alert('Error al crear categoría'); });
     }
 
+    // --- CORRECCIÓN: Función simplificada para SOLO URL ---
     async function handleCreateOrUpdateProduct(e) {
         e.preventDefault();
         const productId = document.getElementById('prodId').value;
         const isEditing = !!productId;
 
-        const formData = new FormData();
-        formData.append('nombre', document.getElementById('prodNombre').value);
-        formData.append('precio', document.getElementById('prodPrecio').value);
-        formData.append('stock', document.getElementById('prodStock').value);
-        formData.append('categoria_id', document.getElementById('prodCategoria').value);
-        formData.append('descripcion', document.getElementById('prodDescripcion').value);
-
-        const tipoArchivo = document.getElementById('tipoArchivo').checked;
-        if (tipoArchivo) {
-            const imagenInput = document.getElementById('prodImagen');
-            if (imagenInput.files.length > 0) {
-                formData.append('imagen', imagenInput.files[0]);
-            }
-        } else {
-            const imagenUrl = document.getElementById('prodImagenUrl').value;
-            if (imagenUrl) {
-                formData.append('imagenUrl', imagenUrl);
-            }
-        }
+        // Ahora usamos un objeto simple en lugar de FormData
+        const productData = { 
+            nombre: document.getElementById('prodNombre').value, 
+            precio: parseFloat(document.getElementById('prodPrecio').value), 
+            stock: parseInt(document.getElementById('prodStock').value), 
+            categoria_id: document.getElementById('prodCategoria').value ? parseInt(document.getElementById('prodCategoria').value) : null, 
+            descripcion: document.getElementById('prodDescripcion').value,
+            imagenUrl: document.getElementById('prodImagenUrl').value // <-- Solo leemos la URL
+        };
 
         const options = {
             method: isEditing ? 'PUT' : 'POST',
-            body: formData
+            headers: { 'Content-Type': 'application/json' }, // Volvemos a enviar JSON
+            body: JSON.stringify(productData)
         };
 
         try {
@@ -313,23 +304,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function setupImageTypeToggle() {
-        const tipoArchivoRadio = document.getElementById('tipoArchivo');
-        const tipoUrlRadio = document.getElementById('tipoUrl');
-        const campoArchivo = document.getElementById('campoArchivo');
-        const campoUrl = document.getElementById('campoUrl');
-
-        tipoArchivoRadio.addEventListener('change', () => {
-            campoArchivo.style.display = 'block';
-            campoUrl.style.display = 'none';
-        });
-
-        tipoUrlRadio.addEventListener('change', () => {
-            campoArchivo.style.display = 'none';
-            campoUrl.style.display = 'block';
-        });
-    }
-
     function openEditProductModal(id) {
         console.log('Intentando abrir el modal para el producto ID:', id);
         const product = allProducts.find(p => p.id == id);
@@ -347,6 +321,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('prodStock').value = product.stock;
         document.getElementById('prodCategoria').value = product.categoria_id;
         document.getElementById('prodDescripcion').value = product.descripcion;
+        // No hay campo de imagen para rellenar en la edición con este diseño
         const productModal = new bootstrap.Modal(document.getElementById('productModal'));
         productModal.show();
     }
@@ -415,5 +390,4 @@ document.addEventListener('DOMContentLoaded', () => {
     fetchCategorias();
     checkLoginStatus();
     setupEventListeners();
-    setupImageTypeToggle();
 });
