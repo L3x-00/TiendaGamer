@@ -44,7 +44,8 @@ app.use((req, res, next) => {
         '45.232.149.130',
         '45.232.149.146',
         '45.232.149.145',
-        '181.176.231.194'
+        '181.176.231.194',
+        '38.252.152.204'
     ]; 
     
     console.log(`[PROD] Modo Producción. Verificando IP: ${clientIP}`);

@@ -3,42 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Walter - Curated Goods</title>
+    <title>Aura - Modern Essentials</title>
     
-    <!-- Google Fonts: Poppins para títulos, Lato para cuerpo -->
+    <!-- Google Fonts: Montserrat para títulos, Open Sans para cuerpo -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
     
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 
-    <!-- --- ESTILOS PERSONALIZADOS "WALTER" --- -->
+    <!-- --- ESTILOS PERSONALIZADOS "AURA" --- -->
     <style>
         :root {
-            --bg-primary: #1e1e1e;
-            --bg-secondary: #2d2d2d;
-            --bg-card: #383838;
-            --accent-color: #d4a5a5;
-            --accent-hover: #c18a8a;
-            --text-primary: #e0e0e0;
-            --text-secondary: #a0a0a0;
-            --border-color: #404040;
+            --bg-primary: #f8f9fa;
+            --bg-secondary: #ffffff;
+            --bg-card: #ffffff;
+            --accent-color: #20c997; /* Un verde azulado vibrante y moderno */
+            --accent-hover: #1aa179;
+            --text-primary: #212529;
+            --text-secondary: #6c757d;
+            --border-color: #dee2e6;
+            --shadow-sm: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+            --shadow-md: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
         }
 
         body {
             background-color: var(--bg-primary);
             color: var(--text-primary);
-            font-family: 'Lato', sans-serif;
+            font-family: 'Open Sans', sans-serif;
             font-size: 0.95rem;
-            line-height: 1.6;
+            line-height: 1.7;
         }
 
         h1, h2, h3, h4, h5, h6 {
-            font-family: 'Poppins', sans-serif;
-            font-weight: 600;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
             color: var(--text-primary);
         }
 
@@ -47,80 +49,117 @@
             background-color: var(--bg-secondary);
             border-bottom: 1px solid var(--border-color);
             padding: 1.5rem 0;
+            box-shadow: var(--shadow-sm);
         }
         .main-header h1 {
             color: var(--text-primary);
             font-weight: 700;
             font-size: 2rem;
-            letter-spacing: -0.5px;
+            letter-spacing: -1px;
         }
         .main-header .btn {
-            font-family: 'Poppins', sans-serif;
-            font-weight: 500;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
             padding: 0.6rem 1.5rem;
-            border-radius: 50px;
+            border-radius: 8px;
             transition: all 0.3s ease;
-            border: 1px solid transparent;
         }
         .main-header .btn-outline-light {
-            border-color: var(--text-secondary);
-            color: var(--text-secondary);
+            border-color: var(--accent-color);
+            color: var(--accent-color);
             background-color: transparent;
         }
         .main-header .btn-outline-light:hover {
             background-color: var(--accent-color);
             border-color: var(--accent-color);
-            color: var(--bg-primary);
+            color: var(--bg-secondary);
         }
         .main-header .btn-danger {
-            background-color: #e57373;
-            border-color: #e57373;
+            background-color: #f35c5c;
+            border-color: #f35c5c;
         }
         .main-header .btn-danger:hover {
-            background-color: #ef5350;
-            border-color: #ef5350;
+            background-color: #e74c3c;
+            border-color: #e74c3c;
         }
 
-        /* --- SIDEBAR --- */
+        /* --- LAYOUT PRINCIPAL (CONTENIDO A LA IZQ, SIDEBAR A LA DER) --- */
+        .main-layout {
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .main-layout > main {
+            flex: 0 0 auto;
+            width: 100%;
+        }
+        @media (min-width: 768px) {
+            .main-layout > main {
+                flex: 0 0 calc(100% - 280px); /* Deja espacio para el sidebar */
+                max-width: calc(100% - 280px);
+            }
+        }
+        .main-layout > nav {
+            flex: 0 0 auto;
+            width: 100%;
+        }
+        @media (min-width: 768px) {
+            .main-layout > nav {
+                flex: 0 0 280px; /* Ancho fijo para el sidebar */
+                max-width: 280px;
+            }
+        }
+
+        /* --- SIDEBAR (AHORA A LA DERECHA) --- */
         .sidebar {
             background-color: var(--bg-secondary);
-            border-right: 1px solid var(--border-color);
+            border-left: 1px solid var(--border-color);
             min-height: calc(100vh - 100px);
             padding: 2rem 1.5rem;
         }
         .sidebar .sidebar-heading {
             color: var(--text-secondary);
             font-size: 0.8rem;
-            font-family: 'Poppins', sans-serif;
+            font-family: 'Montserrat', sans-serif;
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 1px;
             margin-bottom: 1.5rem;
         }
         .categoria-btn {
-            background-color: var(--bg-card);
-            border: 1px solid var(--border-color);
+            background-color: transparent;
+            border: none;
             color: var(--text-secondary);
             padding: 0.8rem 1rem;
             border-radius: 8px;
             transition: all 0.3s ease;
-            font-family: 'Lato', sans-serif;
-            font-weight: 400;
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 600;
             text-align: left;
-            margin-bottom: 0.75rem;
+            width: 100%;
+            margin-bottom: 0.5rem;
+            position: relative;
+        }
+        .categoria-btn::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 4px;
+            height: 0;
+            background-color: var(--accent-color);
+            transition: height 0.3s ease;
+            border-radius: 2px;
         }
         .categoria-btn:hover, .categoria-btn.active {
-            background-color: var(--accent-color);
-            border-color: var(--accent-color);
-            color: var(--bg-primary);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(212, 165, 165, 0.15);
+            background-color: rgba(32, 201, 151, 0.1);
+            color: var(--accent-color);
         }
-        .categoria-btn i {
-            font-size: 1rem;
+        .categoria-btn.active::before, .categoria-btn:hover::before {
+            height: 70%;
         }
         .delete-cat-btn {
-            color: #e57373;
+            color: #f35c5c;
             opacity: 0;
             transition: opacity 0.3s ease;
         }
@@ -128,17 +167,18 @@
             opacity: 1;
         }
         .delete-cat-btn:hover {
-            color: var(--text-primary);
+            color: #e74c3c;
         }
         .sidebar .admin-panel .nav-link {
-            color: #81c784;
+            color: var(--text-secondary);
             padding: 0.8rem 1rem;
             border-radius: 8px;
-            margin-bottom: 0.75rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
         }
         .sidebar .admin-panel .nav-link:hover {
-            color: var(--text-primary);
-            background-color: #388e3c;
+            color: var(--accent-color);
+            background-color: rgba(32, 201, 151, 0.1);
         }
 
         /* --- MAIN CONTENT --- */
@@ -147,29 +187,40 @@
         }
         #productsTitle {
             color: var(--text-primary);
-            font-family: 'Poppins', sans-serif;
+            font-family: 'Montserrat', sans-serif;
             font-weight: 700;
             font-size: 2.2rem;
             margin-bottom: 2.5rem;
+            position: relative;
             padding-bottom: 1rem;
-            border-bottom: 2px solid var(--accent-color);
-            display: inline-block;
+        }
+        #productsTitle::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 60px;
+            height: 4px;
+            background-color: var(--accent-color);
+            border-radius: 2px;
         }
 
         /* --- PRODUCT CARDS --- */
         .producto-card {
             background-color: var(--bg-card);
             border: 1px solid var(--border-color);
-            border-radius: 12px;
+            border-radius: 16px;
             overflow: hidden;
-            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            transition: all 0.4s ease;
             height: 100%;
             display: flex;
             flex-direction: column;
+            box-shadow: var(--shadow-sm);
         }
         .producto-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
+            border-color: var(--accent-color);
         }
         .producto-card .card-img-top {
             height: 220px;
@@ -187,7 +238,7 @@
         }
         .producto-card .card-title {
             font-size: 1.1rem;
-            font-weight: 600;
+            font-weight: 700;
             margin-bottom: 0.5rem;
         }
         .producto-card .card-text {
@@ -198,13 +249,13 @@
         }
         .producto-card h4 {
             color: var(--accent-color);
-            font-family: 'Poppins', sans-serif;
+            font-family: 'Montserrat', sans-serif;
             font-weight: 700;
             font-size: 1.3rem;
         }
         .producto-card .btn {
-            font-family: 'Poppins', sans-serif;
-            font-weight: 500;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
             border-radius: 8px;
             padding: 0.5rem 1rem;
             transition: all 0.3s ease;
@@ -212,7 +263,7 @@
         .producto-card .btn-primary {
             background-color: var(--accent-color);
             border-color: var(--accent-color);
-            color: var(--bg-primary);
+            color: var(--bg-secondary);
         }
         .producto-card .btn-primary:hover {
             background-color: var(--accent-hover);
@@ -220,58 +271,62 @@
             transform: translateY(-1px);
         }
         .producto-card .btn-outline-secondary {
-            border-color: var(--text-secondary);
+            border-color: var(--border-color);
             color: var(--text-secondary);
         }
         .producto-card .btn-outline-secondary:hover {
             background-color: var(--text-secondary);
             border-color: var(--text-secondary);
-            color: var(--bg-primary);
+            color: var(--bg-secondary);
         }
         .producto-card .btn-outline-danger {
-            border-color: #e57373;
-            color: #e57373;
+            border-color: #f35c5c;
+            color: #f35c5c;
         }
         .producto-card .btn-outline-danger:hover {
-            background-color: #e57373;
-            border-color: #e57373;
-            color: var(--bg-primary);
+            background-color: #f35c5c;
+            border-color: #f35c5c;
+            color: var(--bg-secondary);
         }
 
         /* --- MODALS --- */
         .modal-content {
             background-color: var(--bg-secondary);
-            border: 1px solid var(--border-color);
+            border: none;
             color: var(--text-primary);
-            border-radius: 12px;
+            border-radius: 16px;
+            box-shadow: var(--shadow-md);
         }
         .modal-header {
             border-bottom: 1px solid var(--border-color);
+            padding: 1.5rem;
         }
         .modal-footer {
             border-top: 1px solid var(--border-color);
+            padding: 1.5rem;
         }
         .modal-title {
-            font-family: 'Poppins', sans-serif;
-            color: var(--accent-color);
-            font-weight: 600;
+            font-family: 'Montserrat', sans-serif;
+            color: var(--text-primary);
+            font-weight: 700;
         }
         .form-control, .form-select {
-            background-color: var(--bg-card);
+            background-color: var(--bg-primary);
             border: 1px solid var(--border-color);
             color: var(--text-primary);
             border-radius: 8px;
             padding: 0.75rem 1rem;
+            transition: all 0.3s ease;
         }
         .form-control:focus, .form-select:focus {
-            background-color: var(--bg-card);
+            background-color: var(--bg-primary);
             border-color: var(--accent-color);
             color: var(--text-primary);
-            box-shadow: 0 0 0 0.2rem rgba(212, 165, 165, 0.25);
+            box-shadow: 0 0 0 0.2rem rgba(32, 201, 151, 0.25);
         }
         .form-label {
-            color: var(--text-secondary);
-            font-weight: 500;
+            color: var(--text-primary);
+            font-weight: 600;
             margin-bottom: 0.5rem;
         }
         .form-check-input:checked {
@@ -281,7 +336,7 @@
         .form-check-input:focus {
             border-color: var(--accent-color);
             outline: 0;
-            box-shadow: 0 0 0 0.25rem rgba(212, 165, 165, 0.25);
+            box-shadow: 0 0 0 0.25rem rgba(32, 201, 151, 0.25);
         }
         
     </style>
@@ -292,7 +347,7 @@
     <header class="main-header">
         <div class="container">
             <div class="d-flex justify-content-between align-items-center">
-                <h1 class="mb-0">Walter</h1>
+                <h1 class="mb-0">Aura</h1>
                 <div>
                     <button id="btnLogin" class="btn btn-outline-light">Iniciar Sesión</button>
                     <button id="btnLogout" class="btn btn-danger d-none">Cerrar Sesión</button>
@@ -302,9 +357,18 @@
     </header>
 
     <div class="container-fluid">
-        <div class="row">
-            <!-- --- SIDEBAR --- -->
-            <nav class="col-md-3 col-lg-2 d-md-block sidebar">
+        <!-- --- CAMBIO DE ESTRUCTURA: main primero, nav después --- -->
+        <div class="main-layout">
+            <!-- --- CONTENIDO PRINCIPAL (IZQUIERDA) --- -->
+            <main class="px-md-4">
+                <h2 id="productsTitle">Todos los Productos</h2>
+                <div class="row" id="productsGrid">
+                    <!-- Los productos se cargarán aquí con JS -->
+                </div>
+            </main>
+
+            <!-- --- SIDEBAR (DERECHA) --- -->
+            <nav class="sidebar d-md-block">
                 <div class="position-sticky">
                     <h6 class="sidebar-heading">Categorías</h6>
                     <div id="categoriesNav">
@@ -325,14 +389,6 @@
                     </div>
                 </div>
             </nav>
-
-            <!-- --- CONTENIDO PRINCIPAL --- -->
-            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-                <h2 id="productsTitle">Todos los Productos</h2>
-                <div class="row" id="productsGrid">
-                    <!-- Los productos se cargarán aquí con JS -->
-                </div>
-            </main>
         </div>
     </div>
 
