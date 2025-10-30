@@ -120,10 +120,30 @@
                             <label for="prodDescripcion" class="form-label">Descripción</label>
                             <textarea class="form-control" id="prodDescripcion" rows="3"></textarea>
                         </div>
-                        <!-- CAMBIO: Añadido campo para subir imagen -->
+                        
+                        <!-- CAMBIO: Nuevo campo para imagen con opción de archivo o URL -->
                         <div class="mb-3">
-                            <label for="prodImagen" class="form-label">Imagen del Producto</label>
-                            <input class="form-control" type="file" id="prodImagen" accept="image/*">
+                            <label class="form-label">Imagen del Producto</label>
+                            
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="radio" name="imagenTipo" id="tipoArchivo" value="archivo" checked>
+                                <label class="form-check-label" for="tipoArchivo">
+                                    Subir Archivo
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="imagenTipo" id="tipoUrl" value="url">
+                                <label class="form-check-label" for="tipoUrl">
+                                    Pegar URL de Imagen
+                                </label>
+                            </div>
+
+                            <div id="campoArchivo" class="mt-2">
+                                <input class="form-control" type="file" id="prodImagen" accept="image/*">
+                            </div>
+                            <div id="campoUrl" class="mt-2" style="display: none;">
+                                <input type="url" class="form-control" id="prodImagenUrl" placeholder="https://ejemplo.com/imagen.jpg">
+                            </div>
                         </div>
                     </div>
                     <div class="modal-footer">
